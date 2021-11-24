@@ -9,3 +9,5 @@ clean:
 
 3: 
 	gcc -o main lex.yy.c y.tab.c
+
+all: clean 1 2 3
