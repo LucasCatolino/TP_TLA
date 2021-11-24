@@ -18,6 +18,9 @@ nl      \n
 "=="        return EQ;
 ">="        return GE;
 "<="        return LE;
+"si"        return IF;
+"entonces"  return THEN;
+"}"         return EOB;
 "alfabeto" 	printf("de la ‘a’ a la 'z' \n");
 .            {return yytext[0];}
 %%
