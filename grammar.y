@@ -23,6 +23,7 @@
 int intval;
 int yylex();
 extern char *yytext;
+extern int *yylineno;
 %}
 
 %token INTEGER NEWLINE
@@ -49,7 +50,7 @@ expr: INTEGER {$$ = intval;}
      | expr '*' expr  {$$ = $1 * $3;}
      | expr '/' expr  {if($3) $$ = $1 / $3; 
                        else {
-                             printf("Divide by zero");
+                             printf("Error: divide by zero in line %d\n", yylineno);
                              yyerror;
                             }
                       }
@@ -67,6 +68,6 @@ int main(){
 
 static void yyerror(char* s){
     {
-    printf("Oops: %s at symbol %c\n", s, yytext[0]);
+    printf("Error: %s in line %d at symbol %c\n", s, yylineno, yytext[0]);
     }
 }

@@ -74,8 +74,9 @@
 int intval;
 int yylex();
 extern char *yytext;
+extern int *yylineno;
 
-#line 79 "y.tab.c"
+#line 80 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -555,8 +556,8 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    37,    37,    38,    41,    42,    43,    46,    47,    48,
-      49,    50,    56,    57
+       0,    38,    38,    39,    42,    43,    44,    47,    48,    49,
+      50,    51,    57,    58
 };
 #endif
 
@@ -1126,66 +1127,66 @@ yyreduce:
   switch (yyn)
     {
   case 5: /* term: expr NEWLINE  */
-#line 42 "grammar.y"
+#line 43 "grammar.y"
                      {printf("%d\n", yyvsp[-1]);}
-#line 1132 "y.tab.c"
+#line 1133 "y.tab.c"
     break;
 
   case 6: /* term: error NEWLINE  */
-#line 43 "grammar.y"
+#line 44 "grammar.y"
                      {yyerror;}
-#line 1138 "y.tab.c"
+#line 1139 "y.tab.c"
     break;
 
   case 7: /* expr: INTEGER  */
-#line 46 "grammar.y"
+#line 47 "grammar.y"
               {yyval = intval;}
-#line 1144 "y.tab.c"
+#line 1145 "y.tab.c"
     break;
 
   case 8: /* expr: expr '+' expr  */
-#line 47 "grammar.y"
+#line 48 "grammar.y"
                       {yyval = yyvsp[-2] + yyvsp[0];}
-#line 1150 "y.tab.c"
+#line 1151 "y.tab.c"
     break;
 
   case 9: /* expr: expr '-' expr  */
-#line 48 "grammar.y"
+#line 49 "grammar.y"
                       {yyval = yyvsp[-2] - yyvsp[0];}
-#line 1156 "y.tab.c"
+#line 1157 "y.tab.c"
     break;
 
   case 10: /* expr: expr '*' expr  */
-#line 49 "grammar.y"
+#line 50 "grammar.y"
                       {yyval = yyvsp[-2] * yyvsp[0];}
-#line 1162 "y.tab.c"
+#line 1163 "y.tab.c"
     break;
 
   case 11: /* expr: expr '/' expr  */
-#line 50 "grammar.y"
+#line 51 "grammar.y"
                       {if(yyvsp[0]) yyval = yyvsp[-2] / yyvsp[0]; 
                        else {
-                             printf("Divide by zero");
+                             printf("Error: divide by zero in line %d\n", yylineno);
                              yyerror;
                             }
                       }
-#line 1173 "y.tab.c"
+#line 1174 "y.tab.c"
     break;
 
   case 12: /* expr: '(' expr ')'  */
-#line 56 "grammar.y"
+#line 57 "grammar.y"
                     {yyval = yyvsp[-1];}
-#line 1179 "y.tab.c"
+#line 1180 "y.tab.c"
     break;
 
   case 13: /* expr: '-' expr  */
-#line 57 "grammar.y"
+#line 58 "grammar.y"
                              {yyval = - yyvsp[0];}
-#line 1185 "y.tab.c"
+#line 1186 "y.tab.c"
     break;
 
 
-#line 1189 "y.tab.c"
+#line 1190 "y.tab.c"
 
       default: break;
     }
@@ -1378,7 +1379,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 60 "grammar.y"
+#line 61 "grammar.y"
 
 
 int main(){
@@ -1389,6 +1390,6 @@ int main(){
 
 static void yyerror(char* s){
     {
-    printf("Oops: %s at symbol %c\n", s, yytext[0]);
+    printf("Error: %s in line %d at symbol %c\n", s, yylineno, yytext[0]);
     }
 }

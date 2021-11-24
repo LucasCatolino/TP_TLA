@@ -738,7 +738,7 @@ case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
 #line 13 "main.l"
-{return NEWLINE;}
+{yylineno++; return NEWLINE;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP

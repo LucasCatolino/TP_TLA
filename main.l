@@ -10,6 +10,6 @@ nl      \n
 %%
 [ \t]+  ;
 {integer}    {sscanf(yytext, "%d", &intval);  return INTEGER;}
-{nl}         {return NEWLINE;}
+{nl}         {yylineno++; return NEWLINE;}
 .            {return yytext[0];}
 %%
