@@ -58,8 +58,7 @@ expr: INTEGER {$$ = intval;}
     | expr '*' expr  {$$ = $1 * $3;}
     | expr '/' expr  {if($3) $$ = $1 / $3; 
                         else {
-                            printf("Error: divide by zero in line %d\n", yylineno);
-                            yyerror;
+                            yyerror("division por cero");
                         }
                      }
     | '(' expr ')' {$$ = $2;}
@@ -94,6 +93,9 @@ int main(){
 
 static void yyerror(char* s){
     {
-    printf("Error: %s in line %d at symbol %c\n", s, yylineno, yytext[0]);
+        if (yytext[0] == '\n'){
+            yytext[0] = '\\';
+        }
+        printf("Error: %s en linea %d, simbolo %c\n", s, yylineno, yytext[0]);
     }
 }

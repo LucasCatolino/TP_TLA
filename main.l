@@ -6,6 +6,7 @@
     extern int boolval;
     //extern char[] stringval;
     
+    static void yyerror(char* s);
     static void comment(void);
 %}
 
@@ -39,6 +40,7 @@ WS  [ \t\v\n\f]
 static void comment(void)
 {
     int c;
+    int first= yylineno;
     while ((c = input()) != 0){
         if (c == '\n') {
             yylineno++;
@@ -58,5 +60,14 @@ static void comment(void)
             }
         }
     }
-    printf("unterminated comment");
+    yyerror("comentario sin terminar");
+}
+
+static void yyerror(char* s){
+    {
+        if (yytext[0] == '\n'){
+            yytext[0] = '\\';
+        }
+        printf("Error: %s en linea %d, simbolo %c\n", s, yylineno, yytext[0]);
+    }
 }

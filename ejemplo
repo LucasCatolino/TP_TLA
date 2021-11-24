@@ -8,7 +8,7 @@
 /* Este es un bloque
 *  comentado
 *  que termina acá */
-
+7/1;
 si (2>1) entonces {
     4+5;
     9*2;
