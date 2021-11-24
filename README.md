@@ -12,6 +12,10 @@ make 2
 ```sh
 make 3
 ```
+- Para compilar todo junto
+```sh
+make all
+```
 - Para probar
 ```sh
 ./main < ejemplo

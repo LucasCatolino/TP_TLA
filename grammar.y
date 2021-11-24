@@ -25,12 +25,13 @@
 #include "parser.h"
 int intval;
 bool boolval;
+//char[] stringval;
 int yylex();
 extern char *yytext;
 extern int *yylineno;
 %}
 
-%token INTEGER NEWLINE BOOLEAN IF THEN EOB
+%token INTEGER NEWLINE BOOLEAN IF THEN EOB PRINT STRING
 
 %left '+' '-'
 %left '*' '/'
@@ -73,8 +74,14 @@ expr: BOOLEAN {$$ = boolval;}
     | expr EQ expr  {$$ = $1 == $3;}
     ;
 
-expr: IF '(' expr ')' THEN '{' line EOB {if($1) $$ = $3;}
+expr: IF '(' expr ')' THEN '{' line EOB //{if($1) $$ = $3;}
     ;
+
+//expr: PRINT '(' '\"' sentence '\"' ')' {printf("%s"), stringval;}
+//    ;
+
+//sentence: STRING {$$ = stringval}
+//    ;
 
 
 %%
