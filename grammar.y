@@ -35,6 +35,7 @@ extern int *yylineno;
 %left '+' '-'
 %left '*' '/'
 %left '>' '<'
+%left '='
 %nonassoc UMINUS
 
 %start line   /* simbolo sentencial */
@@ -66,6 +67,7 @@ expr: INTEGER {$$ = intval;}
 expr: BOOLEAN {$$ = boolval;}
     | expr '>' expr  {$$ = $1 > $3;}
     | expr '<' expr  {$$ = $1 < $3;}
+    | expr '=' expr  {$$ = $1 == $3;}
     ;
 
 
