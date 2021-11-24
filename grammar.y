@@ -1,5 +1,5 @@
 /* Gramatica: {Vt, Vn, P, S}
- * Vt = {INTEGER, NEWLINE, +, -, *, /, (, )}
+ * Vt = {INTEGER, NEWLINE, BOOLEAN +, -, *, /, (, ), >, <}
  * Vn = {line, term, expr}
  * P = {
  *      line -> epsilon
@@ -13,23 +13,28 @@
  *      expr -> expr / expr
  *      expr -> (expr)
  *      expr -> -expr
+        bool -> expr > expr
+        bool -> expr < expr
  *     }
  * S = line
  */
 
 %{
 #include <stdio.h>
+#include <stdbool.h>
 #include "parser.h"
 int intval;
+bool boolval;
 int yylex();
 extern char *yytext;
 extern int *yylineno;
 %}
 
-%token INTEGER NEWLINE
+%token INTEGER NEWLINE BOOLEAN
 
 %left '+' '-'
 %left '*' '/'
+%left '>' '<'
 %nonassoc UMINUS
 
 %start line   /* simbolo sentencial */
@@ -57,6 +62,12 @@ expr: INTEGER {$$ = intval;}
      | '(' expr ')' {$$ = $2;}
      | '-' expr %prec UMINUS {$$ = - $2;}
      ;
+
+expr: BOOLEAN {$$ = boolval;}
+    | expr '>' expr  {$$ = $1 > $3;}
+    | expr '<' expr  {$$ = $1 < $3;}
+    ;
+
 
 %%
 
