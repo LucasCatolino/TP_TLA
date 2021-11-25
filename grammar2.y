@@ -34,7 +34,7 @@ extern int *yylineno;
     int numero;
 }
 
-%token INICIO FIN NUM ASIGN_VAR FIN_LINEA
+%token INICIO FIN NUM ASIGN_VAR FIN_LINEA INICIO_IF FIN_IF IF_VAR 
 %token <texto> NOMBRE;
 %token <numero> INTEGER;
 
@@ -76,8 +76,8 @@ PROGRAMA:
 lista_sentencias: 
                 sentencia fin_sentencia
                 |sentencia fin_sentencia lista_sentencias
+                | condicional
                 // |condicional lista_sentencias
-                // |condicional
                 ;
     
 fin_sentencia: FIN_LINEA {printf(";");}
@@ -86,8 +86,10 @@ fin_sentencia: FIN_LINEA {printf(";");}
 // // sentencia → E; | WHILE | IF_ELSE | SWITCH_CASE
  sentencia:
            nueva_variable
+            // |condicional
 //         E ';' 
 //         | ASIGNACION
+        ;
 
 nueva_variable:
             tipo_int nombre_int ASIGNACION F_INT
@@ -108,15 +110,34 @@ F_INT: INTEGER {$$ = intval; printf("%d",$1);}
 nombre_int: NOMBRE {printf("%s",$1);}
             ;
 
-//condicional:
-//         | WHILE 
-//         | IF_ELSE 
-//         | SWITCH_CASE
-//         ;
+condicional:
+        estructura_if 
+        // | WHILE 
+        // | SWITCH_CASE
+        ;
+
+estructura_if:
+            definicion_if condicion comienzo_if lista_sentencias fin_if 
+            // | if '(' condicion ')' '{' lista_sentencias '}'
+    ;
+
+definicion_if: IF_VAR {printf("if(");}
+            ;
+
+comienzo_if: INICIO_IF {printf("){\n");}
+            ;
 
 
+fin_if: FIN_IF {printf("}");}
+        ;
 
-     
+// condicion → condicion_logica | condicion_AND | condicion_OR
+condicion:
+        F_INT
+        //condicion_logica
+        //| condicion_AND
+        //| condicion_OR
+        ;
 
 // // WHILE → while ( condicion ) sentencia | while (condicion ) { lista_sentencias }
 // WHILE:
@@ -125,10 +146,7 @@ nombre_int: NOMBRE {printf("%s",$1);}
 //     ;
 
 // // IF → if (condicion) sentencia | if (condicion) {lista_sentencias}
-// IF:
-//     if '(' condicion ')' sentencia
-//     | if '(' condicion ')' '{' lista_sentencias '}'
-//     ;
+
 
 // // IF_ELSE → IF else sentencia | IF else {lista_sentencias }
 // IF_ELSE:
@@ -160,12 +178,6 @@ nombre_int: NOMBRE {printf("%s",$1);}
 //         | default ':' '{' lista_sentencias '}'
 //         ;
 
-// // condicion → condicion_logica | condicion_AND | condicion_OR
-// condicion:
-//         condicion_logica
-//         | condicion_AND
-//         | condicion_OR
-//         ;
 
 // // condicion_AND → condicion_logica && condicion_logica
 // condicion_AND:

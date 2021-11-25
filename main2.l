@@ -6,21 +6,28 @@
     int intval;
 %}
 
-NOMBRE [a-z|A-Z|0-9|_]+
+
 INICIO "inicio:"
 FIN "fin"
 NUM "num"
 ASIGN_VAR "="
 INTEGER [-]?[0-9]+
 FIN_LINEA ";"
+FIN_IF "terminar_si;"
+INICIO_IF "inicio_si:"
+IF_VAR "si:"
+NOMBRE [a-z|A-Z|0-9|_]+
 
 %%
 {INICIO}        return INICIO;
 {FIN}           return FIN;
-{INTEGER} {yylval.numero = atoi(yytext); return INTEGER;}
+{INTEGER}       {yylval.numero = atoi(yytext); return INTEGER;}
 {NUM}           return NUM;
 {ASIGN_VAR}     return ASIGN_VAR;
-{NOMBRE} {strcpy(yylval.texto, yytext); return NOMBRE;}
+{NOMBRE}        {strcpy(yylval.texto, yytext); return NOMBRE;}
+{INICIO_IF}     return INICIO_IF;
+{FIN_IF}        return FIN_IF;
+{IF_VAR}        return IF_VAR;
 {FIN_LINEA}     return FIN_LINEA;
 .               ;
 %%
