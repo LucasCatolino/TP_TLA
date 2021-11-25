@@ -25,8 +25,19 @@ IF_VAR "si"
 WHILE_VAR "mientras"
 AND "y"
 OR "o"
-
+MULTIPLICACION "*"
+SUMA "+"
+RESTA "-"
+DIVISION "/"
+MODULO "%"
+MAS_IGUAL "+="
+MENOS_IGUAL "-="
+MULTPLICACION_IGUAL "*="
+DIVISION_IGUAL "/="
+MODULO_IGUAL "%="
 NOMBRE var_[a-z|A-Z|0-9|_]+
+TEXTO ["][a-z|A-Z|0-9|_| ]+["]
+IMPRIMIR_VAR "imprimir"
 
 %%
 [ \t]+                  ;
@@ -49,18 +60,20 @@ NOMBRE var_[a-z|A-Z|0-9|_]+
 {AND}                   return AND;
 {OR}                    return OR;
 {WHILE_VAR}             return WHILE_VAR;
+{IMPRIMIR_VAR}          return IMPRIMIR_VAR;
+{MULTIPLICACION}        return MULTIPLICACION;
+{SUMA}                  return SUMA;
+{RESTA}                 return RESTA;
+{DIVISION}              return DIVISION;
+{MODULO}                return MODULO;
+{MAS_IGUAL}             return MAS_IGUAL;
+{MENOS_IGUAL}           return MENOS_IGUAL;
+{MULTPLICACION_IGUAL}   return MULTPLICACION_IGUAL;
+{DIVISION_IGUAL}        return DIVISION_IGUAL;
+{MODULO_IGUAL}          return MODULO_IGUAL;
+{TEXTO}                 {strcpy(yylval.texto, yytext); return TEXTO;}
 .                       ;
 %%
-
-// static void yyerror(char* s){
-//     {
-//         if (yytext[0] == '\n'){
-//             yytext[0] = '\\';
-//         }
-//       //  printf("Error: %s en linea %d, simbolo %c\n", s, yylineno, yytext[0]);
-//     }
-// }
-// int yywrap(){return(1);}
 
 static void comment(void)
 {

@@ -1,10 +1,14 @@
 inicio:
     num var_paulo = 1;
     num var_londro = 3;
-    si (1==1 y 2>1) inicio sentencia
+    var_londro = 2 + 2;
+    var_londro += 3;
+    var_londro = 2 / var_paulo * 3;
+    var_londro = var_paulo + var_londro;
+    si (var_paulo < 2) inicio sentencia
         num var_londra = 2;
+        num var_aa=2;
+        imprimir "estoy adentro del if";
     terminar
-    mientras (1==1 y 2>1) inicio sentencia
-        num var_londra = 2;
-    terminar
+    imprimir("hola");
 fin

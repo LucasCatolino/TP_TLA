@@ -34,36 +34,40 @@ extern int *yylineno;
     int numero;
 }
 
-%token INICIO FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR
+%token INICIO FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR MULTIPLICACION SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL IMPRIMIR_VAR
 
-%token <texto> NOMBRE;
-%token <numero> INTEGER;
+%token <texto> NOMBRE
+%token <texto> TEXTO
+%token <numero> INTEGER
 
-%type<numero> F_INT;
+%left SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTPLICACION_IGUAL DIVISION_IGUAL
+
+%type<numero> F_INT
 
 
-
+/*
 %left '+' '-'
 %left '*' '/'
 %left '>' '<'
 %left '='
 %left EQ GE LE NOTEQ
 %nonassoc UMINUS
-
+*/
 %start S /* simbolo sentencial */
 
 %%
 
-// S -> INICIO_PROGRAMA PROGRAMA FIN_PROGRAMA
+// S → INICIO_PROGRAMA PROGRAMA FIN_PROGRAMA
 S:
     INICIO_PROGRAMA PROGRAMA FIN_PROGRAMA
     ;
 
-//INICIO_PROGRAMA -> 
+//INICIO_PROGRAMA → INICIO
 INICIO_PROGRAMA:
-                INICIO {printf("int main(){ ");}
+                INICIO {printf("#include <stdio.h> \n int main(){ ");}
                 ;
 
+//FIN_PROGRAMA → FIN
 FIN_PROGRAMA:
                 FIN {printf("}\n");}
                 ;
@@ -73,20 +77,50 @@ PROGRAMA:
         lista_sentencias
         ;
 
-// lista_sentencias → sentencia | lista_sentencias sentencia
+// lista_sentencias → sentencia fin_sentencia | sentencia fin_sentencia lista_sentencias | condicional lista_sentencias | condicional
 lista_sentencias: 
                 sentencia fin_sentencia
                 |sentencia fin_sentencia lista_sentencias
                 |condicional lista_sentencias 
                 |condicional
                 ;
-    
+
+// fin_sentencia → FIN_LINEA
 fin_sentencia: FIN_LINEA {printf(";");}
                 ;
 
-// sentencia → E; | WHILE | IF_ELSE | SWITCH_CASE
+// sentencia → nueva_variable | operacion_sobre_variable //| WHILE | IF_ELSE | SWITCH_CASE
 sentencia:
            nueva_variable
+           |operacion_sobre_variable
+           |operacion_sobre_variable_igual
+           |imprimir
+        ;
+
+operacion_sobre_variable_igual: variable operador_igual variable
+
+multiple_operadores: operador variable
+                    | operador variable multiple_operadores
+                    ;
+                            
+operacion_sobre_variable: // Puede haber un tema con la paridad en los parametros
+                        variable ASIGNACION variable  multiple_operadores
+                        ;
+
+operador:
+        MULTIPLICACION {printf("*");}
+        |SUMA {printf("+");}
+        |RESTA {printf("-");}   
+        |DIVISION {printf("/");}
+        |MODULO {printf("%%");}
+        ;
+
+operador_igual:
+        |MAS_IGUAL {printf("+=");}
+        |MENOS_IGUAL {printf("-=");}
+        |MULTIPLICACION_IGUAL {printf("*=");}
+        |DIVISION_IGUAL {printf("/=");}
+        |MODULO_IGUAL {printf("%%=");}
         ;
 
 nueva_variable:
@@ -95,7 +129,13 @@ nueva_variable:
             ;
 
 tipo_int: NUM {printf("int ");}
+         ;
 
+imprimir :
+        IMPRIMIR_VAR TEXTO { printf("printf(%s)", $2) ; }
+        | IMPRIMIR_VAR '(' TEXTO ')' { printf("printf(%s)", $3) ; }
+        | error  {yyerror("ERROR EN COMPILACION");}
+        ;
 
 // asignacion --> TIPO_INT NOMBRE = INTEGER; | TIPO_CHAR NOMBRE = CHAR | NOMBRE = CHAR | NOMBRE = INTEGER;
 ASIGNACION:
@@ -161,7 +201,7 @@ and: AND {printf(" && ");}
     ;
 
 variable:
-            nombre_int
+            NOMBRE  {printf("%s",$1);}
             |F_INT
             // | nombre_char
             ;
