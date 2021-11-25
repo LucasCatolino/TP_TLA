@@ -34,7 +34,7 @@ extern int *yylineno;
     int numero;
 }
 
-%token INICIO FIN NUM ASIGN_VAR FIN_LINEA INICIO_IF FIN_IF IF_VAR 
+%token INICIO FIN NUM ASIGN_VAR FIN_LINEA INICIO_IF FIN_CONDICIONAL IF_VAR ELSE_VAR
 %token <texto> NOMBRE;
 %token <numero> INTEGER;
 
@@ -112,24 +112,33 @@ nombre_int: NOMBRE {printf("%s",$1);}
 
 condicional:
         estructura_if 
+        | estructura_if estructura_else
         // | WHILE 
         // | SWITCH_CASE
         ;
 
 estructura_if:
-            definicion_if condicion comienzo_if lista_sentencias fin_if 
+            definicion_if condicion comienzo_if lista_sentencias fin_condicional 
             // | if '(' condicion ')' '{' lista_sentencias '}'
-    ;
+            ;
+
+estructura_else:
+            definicion_else lista_sentencias fin_condicional 
+            ;
 
 definicion_if: IF_VAR {printf("if(");}
             ;
 
-comienzo_if: INICIO_IF {printf("){\n");}
+definicion_else: ELSE_VAR {printf("else{");}
+        ;
+
+comienzo_if: INICIO_IF {printf("){");}
             ;
 
 
-fin_if: FIN_IF {printf("}");}
+fin_condicional: FIN_CONDICIONAL {printf("}");}
         ;
+
 
 // condicion → condicion_logica | condicion_AND | condicion_OR
 condicion:
