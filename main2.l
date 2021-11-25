@@ -12,6 +12,7 @@ FIN "fin"
 NUM "num"
 ASIGN_VAR "="
 INTEGER [-]?[0-9]+
+FIN_LINEA ";"
 
 %%
 {INICIO}        return INICIO;
@@ -20,6 +21,7 @@ INTEGER [-]?[0-9]+
 {NUM}           return NUM;
 {ASIGN_VAR}     return ASIGN_VAR;
 {NOMBRE} {strcpy(yylval.texto, yytext); return NOMBRE;}
+{FIN_LINEA}     return FIN_LINEA;
 .               ;
 %%
 

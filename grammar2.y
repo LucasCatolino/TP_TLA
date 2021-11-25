@@ -34,7 +34,7 @@ extern int *yylineno;
     int numero;
 }
 
-%token INICIO FIN NUM ASIGN_VAR
+%token INICIO FIN NUM ASIGN_VAR FIN_LINEA
 %token <texto> NOMBRE;
 %token <numero> INTEGER;
 
@@ -74,12 +74,15 @@ PROGRAMA:
 
 // // lista_sentencias → sentencia | lista_sentencias sentencia
 lista_sentencias: 
-                sentencia // FIN LINEA
-                // | lista_sentencias sentencia // FIN LINEA
+                sentencia fin_sentencia
+                |sentencia fin_sentencia lista_sentencias
                 // |condicional lista_sentencias
                 // |condicional
                 ;
     
+fin_sentencia: FIN_LINEA {printf(";");}
+                ;
+
 // // sentencia → E; | WHILE | IF_ELSE | SWITCH_CASE
  sentencia:
            nueva_variable
