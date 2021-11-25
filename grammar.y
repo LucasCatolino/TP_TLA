@@ -31,13 +31,13 @@ extern char *yytext;
 extern int *yylineno;
 %}
 
-%token INTEGER NEWLINE BOOLEAN IF THEN EOB PRINT STRING
+%token INTEGER NEWLINE BOOLEAN IF THEN EOB PRINT STRING NOTEQ
 
 %left '+' '-'
 %left '*' '/'
 %left '>' '<'
 %left '='
-%left EQ GE LE
+%left EQ GE LE NOTEQ
 %nonassoc UMINUS
 
 %start line   /* simbolo sentencial */
@@ -71,6 +71,7 @@ expr: BOOLEAN {$$ = boolval;}
     | expr '<' expr  {$$ = $1 < $3;}
     | expr LE expr  {$$ = $1 <= $3;}
     | expr EQ expr  {$$ = $1 == $3;}
+    | expr NOTEQ expr  {$$ = $1 != $3;}
     ;
 
 expr: IF '(' expr ')' THEN '{' line EOB //{if($1) $$ = $3;}

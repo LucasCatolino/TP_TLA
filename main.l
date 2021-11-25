@@ -25,6 +25,7 @@ WS  [ \t\v\n\f]
 {bool}       {sscanf(yytext, "%s", &boolval);  return BOOLEAN;}
 {nl}         {yylineno++; return NEWLINE;}
 "=="        return EQ;
+"!="        return NOTEQ;
 ">="        return GE;
 "<="        return LE;
 "si"        return IF;
