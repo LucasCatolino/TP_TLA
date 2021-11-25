@@ -2,12 +2,12 @@ clean:
 	rm -f lex.yy.c y.tab.c y.tab.h main
 
 1: 
-	yacc -Wcounterexamples -d grammar.y
+	yacc -d grammar2.y
 
 2: 
-	lex main.l
+	lex main2.l
 
 3: 
-	gcc -o main lex.yy.c y.tab.c
+	gcc -o main2 lex.yy.c y.tab.c
 
 all: 1 2 3
