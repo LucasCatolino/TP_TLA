@@ -11,29 +11,45 @@ INICIO "inicio:"
 FIN "fin"
 NUM "num"
 ASIGN_VAR "="
+IGUAL "=="
+MAYOR ">"
+MAYOR_IGUAL ">="
+MENOR "<"
+MENOR_IGUAL "<="
 INTEGER [-]?[0-9]+
 FIN_LINEA ";"
-FIN_CONDICIONAL "terminar."
-ELSE_VAR "sino:"
-INICIO_IF "inicio sentencia:"
-IF_VAR "si:"
+FIN_CONDICIONAL "terminar"
+ELSE_VAR "sino"
+INICIO_CONDICIONAL "inicio sentencia"
+IF_VAR "si"
+WHILE_VAR "mientras"
+AND "y"
+OR "o"
 
-NOMBRE [a-z|A-Z|0-9|_]+
+NOMBRE var_[a-z|A-Z|0-9|_]+
 
 %%
+[ \t]+                  ;
 {INICIO}                return INICIO;
 {FIN}                   return FIN;
 {INTEGER}               {yylval.numero = atoi(yytext); return INTEGER;}
 {NUM}                   return NUM;
 {ASIGN_VAR}             return ASIGN_VAR;
 {NOMBRE}                {strcpy(yylval.texto, yytext); return NOMBRE;}
-{INICIO_IF}             return INICIO_IF;
+{INICIO_CONDICIONAL}    return INICIO_CONDICIONAL;
 {FIN_CONDICIONAL}       return FIN_CONDICIONAL;
 {IF_VAR}                return IF_VAR;
 {FIN_LINEA}             return FIN_LINEA;
 {ELSE_VAR}              return ELSE_VAR;
-
-.                                       ;
+{IGUAL}                 return IGUAL;
+{MENOR}                 return MENOR;
+{MAYOR}                 return MAYOR;
+{MAYOR_IGUAL}           return MAYOR_IGUAL;
+{MENOR_IGUAL}           return MENOR_IGUAL;
+{AND}                   return AND;
+{OR}                    return OR;
+{WHILE_VAR}             return WHILE_VAR;
+.                       ;
 %%
 
 // static void yyerror(char* s){

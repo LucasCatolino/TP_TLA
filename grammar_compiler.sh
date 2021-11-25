@@ -12,4 +12,4 @@
 #             4.
 gcc aux.c -o $2
 
-#rm aux.c
+rm aux.c

@@ -34,7 +34,8 @@ extern int *yylineno;
     int numero;
 }
 
-%token INICIO FIN NUM ASIGN_VAR FIN_LINEA INICIO_IF FIN_CONDICIONAL IF_VAR ELSE_VAR
+%token INICIO FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR
+
 %token <texto> NOMBRE;
 %token <numero> INTEGER;
 
@@ -64,31 +65,28 @@ INICIO_PROGRAMA:
                 ;
 
 FIN_PROGRAMA:
-                FIN {printf("}");}
+                FIN {printf("}\n");}
                 ;
 
-// // PROGRAMA → lista_sentencias
+// PROGRAMA → lista_sentencias
 PROGRAMA: 
         lista_sentencias
         ;
 
-// // lista_sentencias → sentencia | lista_sentencias sentencia
+// lista_sentencias → sentencia | lista_sentencias sentencia
 lista_sentencias: 
                 sentencia fin_sentencia
                 |sentencia fin_sentencia lista_sentencias
-                | condicional
-                // |condicional lista_sentencias
+                |condicional lista_sentencias 
+                |condicional
                 ;
     
 fin_sentencia: FIN_LINEA {printf(";");}
                 ;
 
-// // sentencia → E; | WHILE | IF_ELSE | SWITCH_CASE
- sentencia:
+// sentencia → E; | WHILE | IF_ELSE | SWITCH_CASE
+sentencia:
            nueva_variable
-            // |condicional
-//         E ';' 
-//         | ASIGNACION
         ;
 
 nueva_variable:
@@ -113,14 +111,20 @@ nombre_int: NOMBRE {printf("%s",$1);}
 condicional:
         estructura_if 
         | estructura_if estructura_else
-        // | WHILE 
+        | estructura_while 
         // | SWITCH_CASE
         ;
 
 estructura_if:
-            definicion_if condicion comienzo_if lista_sentencias fin_condicional 
-            // | if '(' condicion ')' '{' lista_sentencias '}'
+            definicion_if condicion inicio_condicional lista_sentencias fin_condicional
+            | definicion_if '(' condicion ')' inicio_condicional lista_sentencias fin_condicional
             ;
+
+estructura_while:
+            definicion_while condicion inicio_condicional lista_sentencias fin_condicional 
+            | definicion_while '(' condicion ')' inicio_condicional lista_sentencias fin_condicional
+            ;
+
 
 estructura_else:
             definicion_else lista_sentencias fin_condicional 
@@ -129,12 +133,14 @@ estructura_else:
 definicion_if: IF_VAR {printf("if(");}
             ;
 
+definicion_while: WHILE_VAR {printf("while(");}
+            ;
+
 definicion_else: ELSE_VAR {printf("else{");}
         ;
 
-comienzo_if: INICIO_IF {printf("){");}
+inicio_condicional: INICIO_CONDICIONAL {printf("){");}
             ;
-
 
 fin_condicional: FIN_CONDICIONAL {printf("}");}
         ;
@@ -143,25 +149,35 @@ fin_condicional: FIN_CONDICIONAL {printf("}");}
 // condicion → condicion_logica | condicion_AND | condicion_OR
 condicion:
         F_INT
-        //condicion_logica
-        //| condicion_AND
-        //| condicion_OR
+        |condicion_logica or condicion_logica
+        |condicion_logica and condicion_logica
+        |condicion_logica
         ;
+        
+or : OR {printf(" || ");}
+    ;
 
-// // WHILE → while ( condicion ) sentencia | while (condicion ) { lista_sentencias }
-// WHILE:
-//     while '(' condicion ')' sentencia 
-//     | while '(' condicion ')' '{' lista_sentencias '}'
-//     ;
+and: AND {printf(" && ");}
+    ;
 
-// // IF → if (condicion) sentencia | if (condicion) {lista_sentencias}
+variable:
+            nombre_int
+            |F_INT
+            // | nombre_char
+            ;
 
+comparador:
+            IGUAL {printf("==");}
+            |MENOR {printf("<");}
+            |MAYOR {printf(">");}   
+            |MENOR_IGUAL {printf("<=");}
+            |MAYOR_IGUAL {printf(">=");}
+            ;
 
-// // IF_ELSE → IF else sentencia | IF else {lista_sentencias }
-// IF_ELSE:
-//         IF else sentencia
-//         | IF else '{'lista_sentencias'}'
-//         ;
+condicion_logica:
+                variable comparador variable
+                ;
+                   
 
 // // lista_CASE → CASE | lista_CASE CASE
 // lista_CASE:
@@ -187,26 +203,6 @@ condicion:
 //         | default ':' '{' lista_sentencias '}'
 //         ;
 
-
-// // condicion_AND → condicion_logica && condicion_logica
-// condicion_AND:
-//             condicion_logica '&' '&' condicion_logica
-//             ;
-
-// // condicion_OR → condicion_logica | | condicion_logica
-// condicion_OR:
-//             condicion_logica '|' '|' condicion_logica
-//             ;
-
-// // condicion_logica → E > E | E < E | E >= E | E <= E | E == E | E != E
-// condicion_logica:
-//                 E '>' E 
-//                 | E '<' E 
-//                 | E GE E 
-//                 | E LE E 
-//                 | E '=''=' E 
-//                 | E '!''=' E
-//                 ;
 
 // // E → E + T | E - T | T
 // E:
@@ -242,6 +238,6 @@ static void yyerror(char* s){
         if (yytext[0] == '\n'){
             yytext[0] = '\\';
         }
-        printf("Error: %s en linea %d, simbolo %c\n", s, yylineno, yytext[0]);
+        printf("Error: %s en linea %d, simbolo %c\n", s, *yylineno, yytext[0]);
     }
 }

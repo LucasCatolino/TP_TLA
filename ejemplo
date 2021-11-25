@@ -1,19 +1,10 @@
-(7+4)*(4/2);
-4 >= 4;
-4 <= 5;
-3 == (1+1+1);
-3 < 2;
-2 < 3;
-// Este es un comentario
-/* Este es un bloque
-*  comentado
-*  que termina acá */
-7/1;
-si (2>1) entonces {
-    4+5;
-    9*2;
-    //imprimir("5");
-};
-
-4+4;
-45;
+inicio:
+    num var_paulo = 1;
+    num var_londro = 3;
+    si (1==1 y 2>1) inicio sentencia
+        num var_londra = 2;
+    terminar
+    mientras (1==1 y 2>1) inicio sentencia
+        num var_londra = 2;
+    terminar
+fin
