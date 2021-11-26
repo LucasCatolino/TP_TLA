@@ -129,6 +129,6 @@ static void yyerror(char* s){
         if (yytext[0] == '\n'){
             yytext[0] = '\\';
         }
-        fprintf(stderr, "Error: %s en linea %d, simbolo %c\n", s, *yylineno, yytext[0]);
+        fprintf(stderr, "Error: %s en linea %d, simbolo %c\n", s, yylineno, yytext[0]);
     }
 }

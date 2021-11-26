@@ -82,6 +82,13 @@ lista_sentencias:
         | condicional
         ;
 
+lista_sentencias_bloques: 
+        sentencia_bloques fin_sentencia
+        | sentencia_bloques fin_sentencia lista_sentencias_bloques
+        | condicional lista_sentencias_bloques 
+        | condicional
+        ;
+
 // fin_sentencia → FIN_LINEA
 fin_sentencia:
         FIN_LINEA {printf(";");}
@@ -91,6 +98,13 @@ fin_sentencia:
 sentencia:
         nueva_variable
         | operacion_sobre_variable
+        | operacion_sobre_variable_igual
+        | imprimir
+        | concat
+        ;
+
+sentencia_bloques:
+         operacion_sobre_variable
         | operacion_sobre_variable_igual
         | imprimir
         | concat
@@ -306,13 +320,13 @@ condicional:
         ;
 
 estructura_if:
-        definicion_if condicion inicio_condicional lista_sentencias fin_condicional
-        | definicion_if PARENTESIS_ABRE condicion PARENTESIS_CIERRA inicio_condicional lista_sentencias fin_condicional
+        definicion_if condicion inicio_condicional lista_sentencias_bloques fin_condicional
+        | definicion_if PARENTESIS_ABRE condicion PARENTESIS_CIERRA inicio_condicional lista_sentencias_bloques fin_condicional
         ;
 
 estructura_while:
-        definicion_while condicion inicio_condicional lista_sentencias fin_condicional 
-        | definicion_while PARENTESIS_ABRE condicion PARENTESIS_CIERRA inicio_condicional lista_sentencias fin_condicional
+        definicion_while condicion inicio_condicional lista_sentencias_bloques fin_condicional 
+        | definicion_while PARENTESIS_ABRE condicion PARENTESIS_CIERRA inicio_condicional lista_sentencias_bloques fin_condicional
         ;
 
 

@@ -1,6 +1,8 @@
+
 /* Ejemplo de bloque
 *  con comentarios
 *  sin importancia
+*/
 
 
 definicion:
@@ -17,9 +19,8 @@ inicio:
     var_londro := var_paulo;
    // var_londro := var_p;
     var_londro = var_paulo + var_londro;
-    si (var_paulo > 2) inicio sentencia
-        num var_londra = 2;
-        num var_aa=2;
+    si (var_paulo < 2) inicio sentencia
+        var_londro +=1;
         imprimir("estoy adentro del if\n");
     terminar
     mientras (var_mientras < 5) inicio sentencia
@@ -42,7 +43,6 @@ fin
 
 /*
 Falta:
-    * Tema variables dentro de bloques!!
     • operaciones sobre variables char (concat, replace, reverse, concatNum)
     • fscan (sabado)
     • buen feedback de errores
