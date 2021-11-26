@@ -40,17 +40,22 @@ MODULO_IGUAL "%="
 NOMBRE var_[a-z|A-Z|0-9|_]+
 TEXTO ["][a-z|A-Z|0-9|_| ]+["]
 IMPRIMIR_VAR "imprimir"
+NOMBRE_CONST const_[a-z|A-Z|0-9|_]+
+DEF "definicion:"
+
 
 
 %%
 [ \t]+                  ;
 {INICIO}                return INICIO;
+{DEF}                   return DEF;
 {FIN}                   return FIN;
 {INTEGER}               {yylval.numero = atoi(yytext); return INTEGER;}
 {NUM}                   return NUM;
 {LETRAS}                return LETRAS;
 {ASIGN_VAR}             return ASIGN_VAR;
 {NOMBRE}                {strcpy(yylval.texto, yytext); return NOMBRE;}
+{NOMBRE_CONST}          {strcpy(yylval.texto, yytext); return NOMBRE_CONST;}
 {INICIO_CONDICIONAL}    return INICIO_CONDICIONAL;
 {FIN_CONDICIONAL}       return FIN_CONDICIONAL;
 {IF_VAR}                return IF_VAR;

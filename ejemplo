@@ -2,6 +2,11 @@
 *  con comentarios
 *  sin importancia
 */
+
+definicion:
+    const_numero = 4
+    const_numero2 = 2
+
 inicio:
     num var_paulo = 1; //Esto es un comentario
     num var_londro = 3;

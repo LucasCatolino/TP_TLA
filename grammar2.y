@@ -34,11 +34,12 @@ extern int *yylineno;
     int numero;
 }
 
-%token INICIO FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR MULTIPLICACION SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL IMPRIMIR_VAR LETRAS
+%token INICIO DEF FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR MULTIPLICACION SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL IMPRIMIR_VAR LETRAS
 
 %token <texto> NOMBRE
 %token <texto> TEXTO
 %token <numero> INTEGER
+%token <texto> NOMBRE_CONST
 
 %left SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTPLICACION_IGUAL DIVISION_IGUAL
 
@@ -61,6 +62,7 @@ extern int *yylineno;
 // S → INICIO_PROGRAMA PROGRAMA FIN_PROGRAMA
 S:
     INICIO_PROGRAMA PROGRAMA FIN_PROGRAMA
+    |DEF DEFINICION INICIO_PROGRAMA PROGRAMA FIN_PROGRAMA
     ;
 
 //INICIO_PROGRAMA → INICIO
@@ -76,6 +78,15 @@ FIN_PROGRAMA:
 // PROGRAMA → lista_sentencias
 PROGRAMA: 
         lista_sentencias
+        ;
+
+DEFINICION:
+        definicion_cons 
+        |definicion_cons definicion_cons
+        ;
+
+definicion_cons:
+        nombre_const ASIGNACION_CONS F_INT
         ;
 
 // lista_sentencias → sentencia fin_sentencia | sentencia fin_sentencia lista_sentencias | condicional lista_sentencias | condicional
@@ -129,6 +140,8 @@ nueva_variable:
             |tipo_char nombre_char ASIGNACION F_CHAR
             ;
 
+// cons: CONSTANTE {printf("#define ");}
+
 tipo_int: NUM {printf("int ");}
          ;
 
@@ -138,6 +151,8 @@ tipo_char: LETRAS {printf("char *");}
 imprimir :
         IMPRIMIR_VAR TEXTO { printf("printf(%s)", $2) ; }
         | IMPRIMIR_VAR '(' TEXTO ')' { printf("printf(%s)", $3) ; }
+        //| IMPRIMIR_VAR nombre_char {printf("printf(%s)", (char *)$2) ;}
+        // | IMPRIMIR_VAR '(' nombre_char ')' {printf("printf(%s)", $3) ;}
         | error  {yyerror("ERROR EN COMPILACION");}
         ;
 
@@ -145,6 +160,10 @@ imprimir :
 ASIGNACION:
             ASIGN_VAR {printf("=");}
             ;
+
+ASIGNACION_CONS:
+             ASIGN_VAR {printf(" ");}
+        ;
         
 F_INT: INTEGER {printf("%d",$1);}
             ;
@@ -157,6 +176,9 @@ nombre_int: NOMBRE {printf("%s",$1);}
 
 nombre_char: NOMBRE {printf("%s",$1);}
             ;
+
+nombre_const: NOMBRE_CONST {printf("#define %s",$1);}
+
 condicional:
         estructura_if 
         | estructura_if estructura_else
