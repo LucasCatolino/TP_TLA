@@ -34,16 +34,19 @@ inicio:
     imprimir(var_londro);
     imprimirln(var_txt);
     imprimir ("CONCANT");
+    letras var_vacia = "a";
+    concatenar(var_vacia ,"hola");
+    imprimirln(var_vacia);
     concatenar(var_txt ,var_txt2);
     concatenar(var_txt ,var_txt2);
-    concatenar(var_txt ,var_txt2);
+    concatenar(var_txt ,"chiao");
     imprimirln(var_txt);
     //reversa (var_txt);
 fin
 
 /*
 Falta:
-    • operaciones sobre variables char (concat, replace, reverse, concatNum)
+    • operaciones sobre variables char (replace, reverse)
     • fscan (sabado)
     • buen feedback de errores
     • idea "diferencial" del lenguaje

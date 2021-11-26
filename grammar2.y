@@ -164,7 +164,6 @@ tipo_char:
 
 concat:
         CONCAT_VAR PARENTESIS_ABRE NOMBRE COMA NOMBRE PARENTESIS_CIERRA {
-                // printf("ENTRO");
                 struct node * first =find($3);
                 struct node * second =find($5);
 
@@ -174,6 +173,24 @@ concat:
                         printf("char * aux%d = calloc(sizeof(char),(strlen(%s)+strlen(%s)));strcat(aux%d,%s);strcat(aux%d,%s); %s = aux%d",i,first->name_var, second->name_var,i,first->name_var,i, second->name_var,first->name_var,i);
                         i+=1;
                 }
+        } 
+        |CONCAT_VAR PARENTESIS_ABRE NOMBRE COMA TEXTO PARENTESIS_CIERRA {
+                struct node * first =find($3);
+        
+
+                if(first == NULL || (!first->is_char)){
+                        yyerror("Argumento invalido");
+                }else{
+                        char *auxSTR = malloc(sizeof(char)* (strlen($5)+1));
+                        strcpy(auxSTR,$5);
+                        if(auxSTR == NULL){
+                        printf("ERROR MALLOC");
+                        }
+                        printf("char * aux%d = calloc(sizeof(char),(strlen(%s)+strlen(%s)));strcat(aux%d,%s);strcat(aux%d,%s);%s = aux%d",i,first->name_var, auxSTR,i,first->name_var,i, auxSTR,first->name_var,i);
+                        i+=1;
+                        free(auxSTR);
+                }
+               
         }  
 
 // reverse:
