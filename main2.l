@@ -11,8 +11,8 @@
 
 INICIO "inicio:"
 FIN "fin"
-NUM "num"
-LETRAS "letras"
+NUM "num "
+LETRAS "letras "
 ASIGN_VAR "="
 ASIGNACION_IGUAL ":="
 IGUAL "=="
@@ -49,8 +49,10 @@ CONCAT_VAR "concatenar"
 PARENTESIS_ABRE "("
 PARENTESIS_CIERRA ")"
 COMA ","
+nl  "\n"
 
 %%
+{nl}                    {yylineno++; ;}
 [ \t]+                  ;
 {INICIO}                return INICIO;
 {DEF}                   return DEF;
@@ -94,8 +96,8 @@ COMA ","
 {COMA}                  return COMA;
 "/*"                    { comment(); }
 "//".*                  { /* consume //-comment */ }
-.                       ;
 %%
+
 
 static void comment(void)
 {

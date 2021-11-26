@@ -1,13 +1,13 @@
-
 /* Ejemplo de bloque
 *  con comentarios
 *  sin importancia
 */
 
-
 definicion:
     const_numero = 4
+    //const_numero = 5
     const_numero2 = 2
+    asd
 
 inicio:
     num var_paulo = -100; //Esto es un comentario

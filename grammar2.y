@@ -6,7 +6,7 @@
 static void yyerror(char *s);
 int yylex();
 extern char *yytext;
-extern int *yylineno;
+extern int yylineno;
 int i = 0;
 int intval; //TODO: ver si sigue andando todo sin esta linea adentro del %{ %}
 %}
@@ -326,7 +326,11 @@ nombre_char:
         ;
 
 nombre_const:
-        NOMBRE_CONST {if(find($1) == NULL){insertFirst($1,0); printf("#define %s",$1);} else{yyerror("duplicated");}}
+        NOMBRE_CONST {if(find($1) == NULL){
+                                insertFirst($1,0); printf("#define %s",$1);
+                        } else{
+                                yyerror("duplicated");
+                        }}
         ;
 
 condicional:
@@ -447,10 +451,10 @@ int main(){
 
 
 static void yyerror(char* s){
-    {
-        if (yytext[0] == '\n'){
-            yytext[0] = '\\';
-        }
-        fprintf(stderr, "Error: %s en linea %d, simbolo %c\n", s, *yylineno, yytext[0]);
-    }
+
+        fprintf(stderr, "---------------------ERROR---------------------\n");
+        fprintf(stderr, "Error: %s\n", s);
+        fprintf(stderr, "Error: %s en linea %d\n", s, yylineno);
+        //fprintf(stderr, "Error: %s en linea %d, simbolo %c\n", s, yylineno, yytext[0]);
+        exit(-1);
 }
