@@ -1,5 +1,5 @@
 clean: 
-	rm -f lex.yy.c y.tab.c y.tab.h main
+	rm -f lex.yy.c y.tab.c y.tab.h main2
 
 1: 
 	yacc -d -Wcounterexamples grammar2.y
