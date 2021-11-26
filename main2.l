@@ -1,4 +1,6 @@
 %option noyywrap
+%option nounput
+
 %{
     #include "y.tab.h"
     #include <string.h>
@@ -40,8 +42,13 @@ MODULO_IGUAL "%="
 NOMBRE var_[a-z|A-Z|0-9|_]+
 TEXTO ["][^\n]*["]
 IMPRIMIR_VAR "imprimir"
+IMPRIMIR_VAR_LINEA "imprimirln"
 NOMBRE_CONST const_[a-z|A-Z|0-9|_]+
 DEF "definicion:"
+CONCAT_VAR "concatenar"
+PARENTESIS_ABRE "("
+PARENTESIS_CIERRA ")"
+COMA ","
 
 %%
 [ \t]+                  ;
@@ -68,6 +75,7 @@ DEF "definicion:"
 {OR}                    return OR;
 {WHILE_VAR}             return WHILE_VAR;
 {IMPRIMIR_VAR}          return IMPRIMIR_VAR;
+{IMPRIMIR_VAR_LINEA}    return IMPRIMIR_VAR_LINEA;
 {MULTIPLICACION}        return MULTIPLICACION;
 {SUMA}                  return SUMA;
 {RESTA}                 return RESTA;
@@ -80,6 +88,10 @@ DEF "definicion:"
 {MODULO_IGUAL}          return MODULO_IGUAL;
 {ASIGNACION_IGUAL}      return ASIGNACION_IGUAL;
 {TEXTO}                 {strcpy(yylval.texto, yytext); return TEXTO;}
+{CONCAT_VAR}            return CONCAT_VAR;
+{PARENTESIS_ABRE}       return PARENTESIS_ABRE;
+{PARENTESIS_CIERRA}     return PARENTESIS_CIERRA;
+{COMA}                  return COMA;
 "/*"                    { comment(); }
 "//".*                  { /* consume //-comment */ }
 .                       ;
@@ -108,7 +120,7 @@ static void comment(void)
             }
         }
     }
-    printf("Error: abre comentario en linea %d\n", first);
+    fprintf(stderr, "Error: abre comentario en linea %d\n", first);
     yyerror("comentario sin terminar");
 }
 
@@ -117,6 +129,6 @@ static void yyerror(char* s){
         if (yytext[0] == '\n'){
             yytext[0] = '\\';
         }
-        printf("Error: %s en linea %d, simbolo %c\n", s, yylineno, yytext[0]);
+        fprintf(stderr, "Error: %s en linea %d, simbolo %c\n", s, *yylineno, yytext[0]);
     }
 }

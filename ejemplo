@@ -1,27 +1,55 @@
 /* Ejemplo de bloque
 *  con comentarios
 *  sin importancia
-*/
+
 
 definicion:
     const_numero = 4
     const_numero2 = 2
 
 inicio:
-    num var_paulo = 1; //Esto es un comentario
+    num var_paulo = -100; //Esto es un comentario
     num var_londro = 3;
+    num var_mientras = 1;
     letras var_p = "hila";
     var_londro = 2 + 2;
     var_londro += 3;
     var_londro := var_paulo;
    // var_londro := var_p;
     var_londro = var_paulo + var_londro;
-    si (var_paulo < 2) inicio sentencia
+    si (var_paulo > 2) inicio sentencia
         num var_londra = 2;
         num var_aa=2;
         imprimir("estoy adentro del if\n");
     terminar
+    mientras (var_mientras < 5) inicio sentencia
+        imprimirln("adentro del mientras");
+        var_mientras += 1;
+    terminar
     letras var_txt = "hola";
+    letras var_txt2 = " rey";
     //var_txt := 2;
-    imprimir("hola\n");
+    imprimirln("hola\n");
+    imprimir(var_londro);
+    imprimirln(var_txt);
+    imprimir ("CONCANT");
+    concatenar(var_txt ,var_txt2);
+    concatenar(var_txt ,var_txt2);
+    concatenar(var_txt ,var_txt2);
+    imprimirln(var_txt);
+    //reversa (var_txt);
 fin
+
+/*
+Falta:
+    * Tema variables dentro de bloques!!
+    • operaciones sobre variables char (concat, replace, reverse, concatNum)
+    • fscan (sabado)
+    • buen feedback de errores
+    • idea "diferencial" del lenguaje
+        ♥ traductor de C para facilitar el aprendizaje del mismo
+        ♥ anios bisiestos
+        ♥ signos en base a fecha de nacimiento
+        ♥ dia en una fecha dada
+    • 
+*/

@@ -1,40 +1,25 @@
-/*
-// PROGRAMA → lista_sentencias
-// lista_sentencias → sentencia | lista_sentencias sentencia
-// sentencia → asignacion | WHILE | IF_ELSE | SWITCH_CASE 
-// asignacion → TIPO_INT NOMBRE = INTEGER; | TIPO_CHAR NOMBRE = CHAR | NOMBRE = CHAR | NOMBRE = INTEGER;
-// WHILE → while ( Condicion ) sentencia | while (condicion ) { lista_sentencias }
-// IF_ELSE → IF else sentencia | IF else {lista_sentencias } 
-// IF → if (condicion) sentencia | if (condicion) {lista_sentencias}
-// SWITCH_CASE → switch ( i ) { lista_CASE } | switch ( i ) { lista_CASE DEFAULT}
-// lista_CASE → CASE | lista_CASE CASE
-// CASE → case c: sentencia | case c: {lista_sentencias}
-// DEFAULT → default: sentencia | default: {lista_sentencias}
-// condicion → condicion_logica | condicion_AND | condicion_OR
-// condicion_AND → condicion_logica && condicion_logica 
-// condicion_OR → condicion_logica | | condicion_logica 
-// condicion_logica → E > E | E < E | E >= E | E <= E | E == E | E != E
-// E → E + T | E - T | T 
-// T → T * F | T / F | F 
-// F → i | c
-*/
-
 %{
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "list.h"
 static void yyerror(char *s);
 int yylex();
 extern char *yytext;
 extern int *yylineno;
+int i = 0;
+int intval; //TODO: ver si sigue andando todo sin esta linea adentro del %{ %}
 %}
-//int intval; //TODO: ver si sigue andando todo sin esta linea adentro del %{ %}
 
 %union{
     char texto[256];
     int numero;
 }
 
-%token INICIO DEF FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR MULTIPLICACION SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL IMPRIMIR_VAR LETRAS ASIGNACION_IGUAL
+%token INICIO DEF FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR
+%token IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR IMPRIMIR_VAR_LINEA MULTIPLICACION
+%token SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL
+%token IMPRIMIR_VAR IMPRIMIR_VAR_LN LETRAS ASIGNACION_IGUAL CONCAT_VAR COMA PARENTESIS_ABRE PARENTESIS_CIERRA
 
 %token <texto> NOMBRE
 %token <texto> TEXTO
@@ -67,7 +52,7 @@ S:
 
 //INICIO_PROGRAMA → INICIO
 INICIO_PROGRAMA:
-        INICIO {printf("#include <stdio.h> \n #include \"list.h\" \n int main(){ ");}
+        INICIO {printf("#include <stdio.h> \n #include <stdlib.h> \n #include \"list.h\" \n #include \"stdio.h\" \n #include \"string.h\" \n int main(){ ");}
         ;
 
 //FIN_PROGRAMA → FIN
@@ -108,6 +93,7 @@ sentencia:
         | operacion_sobre_variable
         | operacion_sobre_variable_igual
         | imprimir
+        | concat
         ;
 
 operacion_sobre_variable_igual:
@@ -162,11 +148,124 @@ tipo_char:
         LETRAS {printf("char *");}
         ;
 
+concat:
+        CONCAT_VAR PARENTESIS_ABRE NOMBRE COMA NOMBRE PARENTESIS_CIERRA {
+                // printf("ENTRO");
+                struct node * first =find($3);
+                struct node * second =find($5);
+
+                if(first == NULL || second == NULL || (!first->is_char || !second->is_char)){
+                        yyerror("Argumento invalido");
+                }else{
+                        printf("char * aux%d = calloc(sizeof(char),(strlen(%s)+strlen(%s)));strcat(aux%d,%s);strcat(aux%d,%s); %s = aux%d",i,first->name_var, second->name_var,i,first->name_var,i, second->name_var,first->name_var,i);
+                        i+=1;
+                }
+        }  
+
+// reverse:
+//         REVERSE_VAR '(' NOMBRE ')' {
+//             struct node * var =find($3);
+            
+//             if( var != NULL && var->is_char ){
+
+//                 int i, j, count = 0;
+//                 while (str[count] != '\0')
+//                 {
+//                     count++;
+//                 }
+//                 j = count - 1;
+
+//                 //reversing the string by swapping
+//                 for (i = 0; i < count; i++)
+//                 {
+//                     rev[i] = str[j];
+//                     j--;
+//                 }
+
+//                 printf("\nString After Reverse: %s", rev);
+
+
+
+//                 printf("printf(\"%%s\",%s)",strrev(var->name_var));
+//             }else{
+//                 yyerror("Argumento invalido en funcion \"reverse\"");
+//             }
+//         }
+
 imprimir:
         IMPRIMIR_VAR TEXTO { printf("printf(%s)", $2) ; }
-        | IMPRIMIR_VAR '(' TEXTO ')' { printf("printf(%s)", $3) ; }
-        //| IMPRIMIR_VAR nombre_char {printf("printf(%s)", (char *)$2) ;}
-        // | IMPRIMIR_VAR '(' nombre_char ')' {printf("printf(%s)", $3) ;}
+        |IMPRIMIR_VAR_LINEA TEXTO {
+                char * aux = malloc(sizeof(char)*strlen($2)+10);
+                strncpy(aux,$2,strlen($2));
+                char * to_concat = "\\n";
+                strncpy(aux+strlen($2)-1,to_concat,strlen(to_concat));
+                aux[strlen($2)+1]='\0';
+            printf("printf(%s\")", aux);
+            free(aux); 
+            }
+        | IMPRIMIR_VAR PARENTESIS_ABRE TEXTO PARENTESIS_CIERRA { printf("printf(%s)", $3) ; }
+        | IMPRIMIR_VAR_LINEA PARENTESIS_ABRE TEXTO PARENTESIS_CIERRA { 
+                  char * aux = malloc(sizeof(char)*strlen($3)+10);
+                strncpy(aux,$3,strlen($3));
+                char * to_concat = "\\n";
+                strncpy(aux+strlen($3)-1,to_concat,strlen(to_concat));
+                aux[strlen($3)+1]='\0';
+            printf("printf(%s\")", aux);
+            free(aux); 
+            }
+        | IMPRIMIR_VAR NOMBRE {
+                struct node * node = find($2);
+                if(node == NULL){
+                        yyerror("Error, variable invalida");
+                }else{
+                   if(node->is_char){
+                         printf("printf(\"%%s\", %s)", (char *)node->name_var);
+                    }
+                    else{
+                         printf("printf(\"%%d\", %s)", (char *)node->name_var);
+                        } 
+                }
+        }
+        | IMPRIMIR_VAR PARENTESIS_ABRE NOMBRE PARENTESIS_CIERRA {
+                struct node * node = find($3);
+                if(node == NULL){
+                        yyerror("Error, variable invalida");
+                }else{
+                   if(node->is_char){
+                         printf("printf(\"%%s\", %s)", (char *)node->name_var);
+                    }
+                    else{
+                         printf("printf(\"%%d\", %s)", (char *)node->name_var);
+                        } 
+                }
+        }
+        | IMPRIMIR_VAR_LINEA NOMBRE {
+                struct node * node = find($2);
+                if(node == NULL){
+                        yyerror("Error, variable invalida");
+                }else{
+                   if(node->is_char){
+                         printf("printf(\"%%s \\n\", %s)", (char *)node->name_var);
+                    }
+                    else{
+                         printf("printf(\"%%d \\n\", %s)", (char *)node->name_var);
+                        } 
+                }
+        }
+        | IMPRIMIR_VAR_LINEA PARENTESIS_ABRE NOMBRE PARENTESIS_CIERRA {
+                struct node * node = find($3);
+                if(node == NULL){
+                        yyerror("Error, variable invalida");
+                }else{
+                   if(node->is_char){
+                         printf("printf(\"%%s \\n\", %s)", (char *)node->name_var);
+                    }
+                    else{
+                         printf("printf(\"%%d \\n\", %s)", (char *)node->name_var);
+                        } 
+                }
+        }
+        // | IMPRIMIR_VAR PARENTESIS_ABRE NOMBRE PARENTESIS_CIERRA {printf("printf(%s)", $3) ;}
         | error  {yyerror("en compilacion");}
         ;
 
@@ -208,12 +307,12 @@ condicional:
 
 estructura_if:
         definicion_if condicion inicio_condicional lista_sentencias fin_condicional
-        | definicion_if '(' condicion ')' inicio_condicional lista_sentencias fin_condicional
+        | definicion_if PARENTESIS_ABRE condicion PARENTESIS_CIERRA inicio_condicional lista_sentencias fin_condicional
         ;
 
 estructura_while:
         definicion_while condicion inicio_condicional lista_sentencias fin_condicional 
-        | definicion_while '(' condicion ')' inicio_condicional lista_sentencias fin_condicional
+        | definicion_while PARENTESIS_ABRE condicion PARENTESIS_CIERRA inicio_condicional lista_sentencias fin_condicional
         ;
 
 
@@ -311,7 +410,6 @@ condicion_logica:
 
 
 int main(){
-
   yyparse();
   return 0;
 }
@@ -322,6 +420,6 @@ static void yyerror(char* s){
         if (yytext[0] == '\n'){
             yytext[0] = '\\';
         }
-        printf("Error: %s en linea %d, simbolo %c\n", s, *yylineno, yytext[0]);
+        fprintf(stderr, "Error: %s en linea %d, simbolo %c\n", s, *yylineno, yytext[0]);
     }
 }
