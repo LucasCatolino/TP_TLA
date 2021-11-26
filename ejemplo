@@ -10,10 +10,11 @@ definicion:
 inicio:
     num var_paulo = 1; //Esto es un comentario
     num var_londro = 3;
+    letras var_p = "hila";
     var_londro = 2 + 2;
     var_londro += 3;
-    var_londro := 5;
-    var_londro = 2 / var_paulo * 3;
+    var_londro := var_paulo;
+   // var_londro := var_p;
     var_londro = var_paulo + var_londro;
     si (var_paulo < 2) inicio sentencia
         num var_londra = 2;
@@ -21,6 +22,6 @@ inicio:
         imprimir("estoy adentro del if");
     terminar
     letras var_txt = "hola";
-    var_txt := "chau";
+    //var_txt := 2;
     imprimir("hola");
 fin

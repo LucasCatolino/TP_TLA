@@ -61,19 +61,19 @@ extern int *yylineno;
 
 // S → INICIO_PROGRAMA PROGRAMA FIN_PROGRAMA
 S:
-    INICIO_PROGRAMA PROGRAMA FIN_PROGRAMA
-    |DEF DEFINICION INICIO_PROGRAMA PROGRAMA FIN_PROGRAMA
-    ;
+        INICIO_PROGRAMA PROGRAMA FIN_PROGRAMA
+        | DEF DEFINICION INICIO_PROGRAMA PROGRAMA FIN_PROGRAMA
+        ;
 
 //INICIO_PROGRAMA → INICIO
 INICIO_PROGRAMA:
-                INICIO {printf("#include <stdio.h> \n #include \"list.h\" \n int main(){ ");}
-                ;
+        INICIO {printf("#include <stdio.h> \n #include \"list.h\" \n int main(){ ");}
+        ;
 
 //FIN_PROGRAMA → FIN
 FIN_PROGRAMA:
-                FIN {printf("}\n");}
-                ;
+        FIN {printf("}\n");}
+        ;
 
 // PROGRAMA → lista_sentencias
 PROGRAMA: 
@@ -82,7 +82,7 @@ PROGRAMA:
 
 DEFINICION:
         definicion_cons 
-        |definicion_cons definicion_cons
+        | definicion_cons definicion_cons
         ;
 
 definicion_cons:
@@ -91,95 +91,113 @@ definicion_cons:
 
 // lista_sentencias → sentencia fin_sentencia | sentencia fin_sentencia lista_sentencias | condicional lista_sentencias | condicional
 lista_sentencias: 
-                sentencia fin_sentencia
-                |sentencia fin_sentencia lista_sentencias
-                |condicional lista_sentencias 
-                |condicional
-                ;
+        sentencia fin_sentencia
+        | sentencia fin_sentencia lista_sentencias
+        | condicional lista_sentencias 
+        | condicional
+        ;
 
 // fin_sentencia → FIN_LINEA
-fin_sentencia: FIN_LINEA {printf(";");}
-                ;
+fin_sentencia:
+        FIN_LINEA {printf(";");}
+        ;
 
 // sentencia → nueva_variable | operacion_sobre_variable //| WHILE | IF_ELSE | SWITCH_CASE
 sentencia:
-           nueva_variable
-           |operacion_sobre_variable
-           |operacion_sobre_variable_igual
-           |imprimir
+        nueva_variable
+        | operacion_sobre_variable
+        | operacion_sobre_variable_igual
+        | imprimir
         ;
 
-operacion_sobre_variable_igual: variable operador_igual variable 
+operacion_sobre_variable_igual:
+        variable_int operador_igual F_INT 
+        |variable_int operador_igual variable_int
+         ;
+                        
+variable_int: NOMBRE {struct node * aux = find($1); if(aux == NULL || aux->is_char){yyerror("Tipo de argumento invalido");}else{printf("%s",$1);}}
+                ;
 
-multiple_operadores: operador variable
-                    | operador variable multiple_operadores
-                    ;
+multiple_operadores:
+        operador variable_int
+        | operador variable_int multiple_operadores
+        | operador F_INT
+        | operador F_INT multiple_operadores
+        ;
                             
 operacion_sobre_variable: // Puede haber un tema con la paridad en los parametros
-                        variable ASIGNACION variable  multiple_operadores
-                        ;
+        variable_int ASIGNACION variable_int  multiple_operadores
+        |variable_int ASIGNACION F_INT  multiple_operadores
+        ;
 
 operador:
         MULTIPLICACION {printf("*");}
-        |SUMA {printf("+");}
-        |RESTA {printf("-");}   
-        |DIVISION {printf("/");}
-        |MODULO {printf("%%");}
+        | SUMA {printf("+");}
+        | RESTA {printf("-");}   
+        | DIVISION {printf("/");}
+        | MODULO {printf("%%");}
         ;
 
 operador_igual:
-        |MAS_IGUAL {printf("+=");}
-        |MENOS_IGUAL {printf("-=");}
-        |MULTIPLICACION_IGUAL {printf("*=");}
-        |DIVISION_IGUAL {printf("/=");}
-        |MODULO_IGUAL {printf("%%=");}
-        |ASIGNACION_IGUAL {printf("=");}
+        MAS_IGUAL {printf("+=");}
+        | MENOS_IGUAL {printf("-=");}
+        | MULTIPLICACION_IGUAL {printf("*=");}
+        | DIVISION_IGUAL {printf("/=");}
+        | MODULO_IGUAL {printf("%%=");}
+        | ASIGNACION_IGUAL {printf("=");}
         ;
 
 nueva_variable:
-            tipo_int nombre_int ASIGNACION F_INT
-            |tipo_char nombre_char ASIGNACION F_CHAR
-            ;
+        tipo_int nombre_int ASIGNACION F_INT
+        | tipo_char nombre_char ASIGNACION F_CHAR
+        ;
 
 // cons: CONSTANTE {printf("#define ");}
 
-tipo_int: NUM {printf("int ");}
-         ;
+tipo_int:
+        NUM {printf("int ");}
+        ;
 
-tipo_char: LETRAS {printf("char *");}
-         ;
+tipo_char:
+        LETRAS {printf("char *");}
+        ;
 
-imprimir :
+imprimir:
         IMPRIMIR_VAR TEXTO { printf("printf(%s)", $2) ; }
         | IMPRIMIR_VAR '(' TEXTO ')' { printf("printf(%s)", $3) ; }
         //| IMPRIMIR_VAR nombre_char {printf("printf(%s)", (char *)$2) ;}
         // | IMPRIMIR_VAR '(' nombre_char ')' {printf("printf(%s)", $3) ;}
-        | error  {yyerror("ERROR EN COMPILACION");}
+        | error  {yyerror("en compilacion");}
         ;
 
 // asignacion --> TIPO_INT NOMBRE = INTEGER; | TIPO_CHAR NOMBRE = CHAR | NOMBRE = CHAR | NOMBRE = INTEGER;
 ASIGNACION:
-            ASIGN_VAR {printf("=");}
-            ;
+        ASIGN_VAR {printf("=");}
+        ;
 
 ASIGNACION_CONS:
-             ASIGN_VAR {printf(" ");}
+        ASIGN_VAR {printf(" ");}
         ;
         
-F_INT: INTEGER {printf("%d",$1);}
-            ;
+F_INT:
+        INTEGER {printf("%d",$1);}
+        ;
 
-F_CHAR: TEXTO {printf("%s",$1);}
-            ;
+F_CHAR:
+        TEXTO {printf("%s",$1);}
+        ;
 
-nombre_int: NOMBRE { if(find($1) == NULL){insertFirst($1,0); printf("%s",$1);} else{yyerror("DUPLICATED");}}
-            ;
+nombre_int:
+        NOMBRE { if(find($1) == NULL){insertFirst($1,0); printf("%s",$1);} else{yyerror("duplicated");}}
+        ;
 
-nombre_char: NOMBRE {if(find($1) == NULL){insertFirst($1,1); printf("%s",$1);} else{yyerror("DUPLICATED");}}
-            ;
+nombre_char:
+        NOMBRE {if(find($1) == NULL){insertFirst($1,1); printf("%s",$1);} else{yyerror("duplicated");}}
+        ;
 
-nombre_const: NOMBRE_CONST {if(find($1) == NULL){insertFirst($1,0); printf("#define %s",$1);} else{yyerror("DUPLICATED");}}
-                ;
+nombre_const:
+        NOMBRE_CONST {if(find($1) == NULL){insertFirst($1,0); printf("#define %s",$1);} else{yyerror("duplicated");}}
+        ;
 
 condicional:
         estructura_if 
@@ -189,67 +207,77 @@ condicional:
         ;
 
 estructura_if:
-            definicion_if condicion inicio_condicional lista_sentencias fin_condicional
-            | definicion_if '(' condicion ')' inicio_condicional lista_sentencias fin_condicional
-            ;
+        definicion_if condicion inicio_condicional lista_sentencias fin_condicional
+        | definicion_if '(' condicion ')' inicio_condicional lista_sentencias fin_condicional
+        ;
 
 estructura_while:
-            definicion_while condicion inicio_condicional lista_sentencias fin_condicional 
-            | definicion_while '(' condicion ')' inicio_condicional lista_sentencias fin_condicional
-            ;
+        definicion_while condicion inicio_condicional lista_sentencias fin_condicional 
+        | definicion_while '(' condicion ')' inicio_condicional lista_sentencias fin_condicional
+        ;
 
 
 estructura_else:
-            definicion_else lista_sentencias fin_condicional 
-            ;
-
-definicion_if: IF_VAR {printf("if(");}
-            ;
-
-definicion_while: WHILE_VAR {printf("while(");}
-            ;
-
-definicion_else: ELSE_VAR {printf("else{");}
+        definicion_else lista_sentencias fin_condicional 
         ;
 
-inicio_condicional: INICIO_CONDICIONAL {printf("){");}
-            ;
+definicion_if:
+        IF_VAR {printf("if(");}
+        ;
 
-fin_condicional: FIN_CONDICIONAL {printf("}");}
+definicion_while:
+        WHILE_VAR {printf("while(");}
+        ;
+
+definicion_else:
+        ELSE_VAR {printf("else{");}
+        ;
+
+inicio_condicional:
+        INICIO_CONDICIONAL {printf("){");}
+        ;
+
+fin_condicional:
+        FIN_CONDICIONAL {printf("}");}
         ;
 
 
 // condicion → condicion_logica | condicion_AND | condicion_OR
 condicion:
         F_INT
-        |condicion_logica or condicion_logica
-        |condicion_logica and condicion_logica
-        |condicion_logica
+        | condicion_logica or condicion_logica
+        | condicion_logica and condicion_logica
+        | condicion_logica
         ;
         
-or : OR {printf(" || ");}
-    ;
+or:
+        OR {printf(" || ");}
+        ;
 
-and: AND {printf(" && ");}
-    ;
+and:
+        AND {printf(" && ");}
+        ;
 
 variable:
-            NOMBRE  {if(find($1)!=NULL){printf("%s",$1);} else {yyerror("Variable not found");}}
-            |F_INT
-            |F_CHAR
-            ;
+        NOMBRE  {if(find($1)!=NULL){printf("%s",$1);} else {yyerror("variable not found");}}
+        //| F_INT
+        //| F_CHAR
+        ;
 
 comparador:
-            IGUAL {printf("==");}
-            |MENOR {printf("<");}
-            |MAYOR {printf(">");}   
-            |MENOR_IGUAL {printf("<=");}
-            |MAYOR_IGUAL {printf(">=");}
-            ;
+        IGUAL {printf("==");}
+        | MENOR {printf("<");}
+        | MAYOR {printf(">");}   
+        | MENOR_IGUAL {printf("<=");}
+        | MAYOR_IGUAL {printf(">=");}
+        ;
 
 condicion_logica:
-                variable comparador variable
-                ;
+        variable_int comparador variable_int
+        | F_INT comparador F_INT
+        | variable_int comparador F_INT
+        | F_INT comparador variable_int
+        ;
                    
 
 // // lista_CASE → CASE | lista_CASE CASE

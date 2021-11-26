@@ -88,6 +88,7 @@ DEF "definicion:"
 static void comment(void)
 {
     int c;
+    int first= yylineno;
     while ((c = input()) != 0){
         if (c == '\n') {
             yylineno++;
@@ -107,6 +108,7 @@ static void comment(void)
             }
         }
     }
+    printf("Error: abre comentario en linea %d\n", first);
     yyerror("comentario sin terminar");
 }
 

@@ -1,4 +1,5 @@
 // Idea general sacada de https://www.tutorialspoint.com/data_structures_algorithms/linked_list_program_in_c.htm
+// Se eliminaron funcionalidades que no se creyeron necesarias para la implementacion de este trabajo
 
 #include <stdio.h>
 #include <string.h>
