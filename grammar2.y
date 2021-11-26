@@ -34,7 +34,7 @@ extern int *yylineno;
     int numero;
 }
 
-%token INICIO FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR MULTIPLICACION SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL IMPRIMIR_VAR
+%token INICIO FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR MULTIPLICACION SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL IMPRIMIR_VAR LETRAS
 
 %token <texto> NOMBRE
 %token <texto> TEXTO
@@ -43,6 +43,7 @@ extern int *yylineno;
 %left SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTPLICACION_IGUAL DIVISION_IGUAL
 
 %type<numero> F_INT
+%type<texto> F_CHAR
 
 
 /*
@@ -125,10 +126,13 @@ operador_igual:
 
 nueva_variable:
             tipo_int nombre_int ASIGNACION F_INT
-            // | tipo_char nombre_char ASIGNACION CHAR
+            |tipo_char nombre_char ASIGNACION F_CHAR
             ;
 
 tipo_int: NUM {printf("int ");}
+         ;
+
+tipo_char: LETRAS {printf("char *");}
          ;
 
 imprimir :
@@ -142,12 +146,17 @@ ASIGNACION:
             ASIGN_VAR {printf("=");}
             ;
         
-F_INT: INTEGER {$$ = intval; printf("%d",$1);}
+F_INT: INTEGER {printf("%d",$1);}
+            ;
+
+F_CHAR: TEXTO {printf("%s",$1);}
             ;
 
 nombre_int: NOMBRE {printf("%s",$1);}
             ;
 
+nombre_char: NOMBRE {printf("%s",$1);}
+            ;
 condicional:
         estructura_if 
         | estructura_if estructura_else

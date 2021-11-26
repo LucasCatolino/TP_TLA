@@ -12,7 +12,8 @@ inicio:
     si (var_paulo < 2) inicio sentencia
         num var_londra = 2;
         num var_aa=2;
-        imprimir "estoy adentro del if";
+        imprimir("estoy adentro del if");
     terminar
+    letras var_txt = "hola";
     imprimir("hola");
 fin

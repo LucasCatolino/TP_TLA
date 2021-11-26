@@ -11,6 +11,7 @@
 INICIO "inicio:"
 FIN "fin"
 NUM "num"
+LETRAS "letras"
 ASIGN_VAR "="
 IGUAL "=="
 MAYOR ">"
@@ -40,12 +41,14 @@ NOMBRE var_[a-z|A-Z|0-9|_]+
 TEXTO ["][a-z|A-Z|0-9|_| ]+["]
 IMPRIMIR_VAR "imprimir"
 
+
 %%
 [ \t]+                  ;
 {INICIO}                return INICIO;
 {FIN}                   return FIN;
 {INTEGER}               {yylval.numero = atoi(yytext); return INTEGER;}
 {NUM}                   return NUM;
+{LETRAS}                return LETRAS;
 {ASIGN_VAR}             return ASIGN_VAR;
 {NOMBRE}                {strcpy(yylval.texto, yytext); return NOMBRE;}
 {INICIO_CONDICIONAL}    return INICIO_CONDICIONAL;
