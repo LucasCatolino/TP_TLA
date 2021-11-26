@@ -21,13 +21,13 @@
 
 %{
 #include <stdio.h>
+#include "list.h"
 static void yyerror(char *s);
 int yylex();
 int intval;
 extern char *yytext;
 extern int *yylineno;
 %}
-
 
 %union{
     char texto[256];
@@ -67,7 +67,7 @@ S:
 
 //INICIO_PROGRAMA → INICIO
 INICIO_PROGRAMA:
-                INICIO {printf("#include <stdio.h> \n int main(){ ");}
+                INICIO {printf("#include <stdio.h> \n #include \"list.h\" \n int main(){ ");}
                 ;
 
 //FIN_PROGRAMA → FIN
@@ -171,13 +171,14 @@ F_INT: INTEGER {printf("%d",$1);}
 F_CHAR: TEXTO {printf("%s",$1);}
             ;
 
-nombre_int: NOMBRE {printf("%s",$1);}
+nombre_int: NOMBRE { if(find($1) == NULL){insertFirst($1,0); printf("%s",$1);} else{yyerror("DUPLICATED");}}
             ;
 
-nombre_char: NOMBRE {printf("%s",$1);}
+nombre_char: NOMBRE {if(find($1) == NULL){insertFirst($1,1); printf("%s",$1);} else{yyerror("DUPLICATED");}}
             ;
 
-nombre_const: NOMBRE_CONST {printf("#define %s",$1);}
+nombre_const: NOMBRE_CONST {if(find($1) == NULL){insertFirst($1,0); printf("#define %s",$1);} else{yyerror("DUPLICATED");}}
+                ;
 
 condicional:
         estructura_if 
@@ -274,23 +275,6 @@ condicion_logica:
 //         | default ':' '{' lista_sentencias '}'
 //         ;
 
-
-// // E → E + T | E - T | T
-// E:
-//     E '+' T
-//     | E '-' T
-//     | T
-//     ;
-
-// // T → T * F | T / F | F
-// T:
-//     T '*' F
-//     | T '/' F
-//     | F
-//     ;
-
-// // F → i | c
-// F:
 //     INTEGER {$$ = intval;}
 //     | CHAR
 //     ;

@@ -7,7 +7,6 @@
     int intval;
 %}
 
-
 INICIO "inicio:"
 FIN "fin"
 NUM "num"
@@ -42,8 +41,6 @@ TEXTO ["][a-z|A-Z|0-9|_| ]+["]
 IMPRIMIR_VAR "imprimir"
 NOMBRE_CONST const_[a-z|A-Z|0-9|_]+
 DEF "definicion:"
-
-
 
 %%
 [ \t]+                  ;

@@ -8,6 +8,6 @@ clean:
 	lex main2.l
 
 3: 
-	gcc -o main2 lex.yy.c y.tab.c
+	gcc -o main2 list.c lex.yy.c y.tab.c
 
 all: 1 2 3
