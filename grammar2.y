@@ -258,10 +258,10 @@ and:
         AND {printf(" && ");}
         ;
 
-variable:
-        NOMBRE  {if(find($1)!=NULL){printf("%s",$1);} else {yyerror("variable not found");}}
-        //| F_INT
-        //| F_CHAR
+// variable: UNUSED TYPE
+//         NOMBRE  {if(find($1)!=NULL){printf("%s",$1);} else {yyerror("variable not found");}}
+//         //| F_INT
+//         //| F_CHAR
         ;
 
 comparador:

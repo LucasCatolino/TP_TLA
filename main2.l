@@ -38,7 +38,7 @@ MULTPLICACION_IGUAL "*="
 DIVISION_IGUAL "/="
 MODULO_IGUAL "%="
 NOMBRE var_[a-z|A-Z|0-9|_]+
-TEXTO ["][a-z|A-Z|0-9|_| ]+["]
+TEXTO ["][^\n]*["]
 IMPRIMIR_VAR "imprimir"
 NOMBRE_CONST const_[a-z|A-Z|0-9|_]+
 DEF "definicion:"
