@@ -40,15 +40,23 @@ inicio:
     concatenar(var_txt ,var_txt2);
     concatenar(var_txt ,var_txt2);
     concatenar(var_txt ,"chiao");
+    imprimirln("Inserte palabra:");
+    leer(var_txt);
+    imprimir("Palabra: ");
     imprimirln(var_txt);
+    imprimirln("Inserte numero:");
+    leer(var_londro);
+    imprimir("Numero: ");
+    var_londro += 1;
+    imprimirln(var_londro);
     //reversa (var_txt);
 fin
 
 /*
 Falta:
-    • operaciones sobre variables char (replace, reverse)
+    • operaciones sobre variables char (replace)
     • fscan (sabado)
-    • buen feedback de errores
+    • buen feedback de errores (PARECE Q ESTA)
     • idea "diferencial" del lenguaje
         ♥ traductor de C para facilitar el aprendizaje del mismo
         ♥ anios bisiestos

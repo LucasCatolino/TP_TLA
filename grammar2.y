@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "list.h"
+#define MAX_READEABLE_LENGTH 1024
 static void yyerror(char *s);
 int yylex();
 extern char *yytext;
@@ -19,7 +20,7 @@ int intval; //TODO: ver si sigue andando todo sin esta linea adentro del %{ %}
 %token INICIO DEF FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR
 %token IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR IMPRIMIR_VAR_LINEA MULTIPLICACION
 %token SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL
-%token IMPRIMIR_VAR IMPRIMIR_VAR_LN LETRAS ASIGNACION_IGUAL CONCAT_VAR COMA PARENTESIS_ABRE PARENTESIS_CIERRA
+%token IMPRIMIR_VAR IMPRIMIR_VAR_LN LETRAS ASIGNACION_IGUAL CONCAT_VAR COMA PARENTESIS_ABRE PARENTESIS_CIERRA LEER_VAR
 
 %token <texto> NOMBRE
 %token <texto> TEXTO
@@ -101,6 +102,7 @@ sentencia:
         | operacion_sobre_variable_igual
         | imprimir
         | concat
+        |leer
         ;
 
 sentencia_bloques:
@@ -222,6 +224,24 @@ concat:
 //                 yyerror("Argumento invalido en funcion \"reverse\"");
 //             }
 //         }
+
+
+leer:
+        LEER_VAR PARENTESIS_ABRE NOMBRE PARENTESIS_CIERRA{
+                struct node * aux=find($3);
+        
+                if(aux == NULL ){
+                        yyerror("La variable no esta definida");
+                }
+                if(aux->is_char){
+                printf("char * aux%d = calloc(sizeof(char),%d);scanf(\"%%s\",aux%d);%s = aux%d",i,MAX_READEABLE_LENGTH,i,aux->name_var,i);
+                i+=1;
+                }else{
+                        printf("int aux%d = 0;;scanf(\"%%d\",&aux%d);%s = aux%d",i,i,aux->name_var,i);
+                        i+=1;
+                }
+
+        }
 
 imprimir:
         IMPRIMIR_VAR TEXTO { printf("printf(%s)", $2) ; }
@@ -414,7 +434,7 @@ condicion_logica:
         ;
                    
 
-// // lista_CASE → CASE | lista_CASE CASE
+// // lista_CASE → CASE | lista CASE
 // lista_CASE:
 //            CASE 
 //            | lista_CASE CASE
@@ -451,10 +471,11 @@ int main(){
 
 
 static void yyerror(char* s){
-
+        if (!strcmp("syntax error", s)){
+                s= "error de sintaxis";
+        }
         fprintf(stderr, "---------------------ERROR---------------------\n");
-        fprintf(stderr, "Error: %s\n", s);
         fprintf(stderr, "Error: %s en linea %d\n", s, yylineno);
-        //fprintf(stderr, "Error: %s en linea %d, simbolo %c\n", s, yylineno, yytext[0]);
+        fprintf(stderr, "-----------------------------------------------\n");
         exit(-1);
 }

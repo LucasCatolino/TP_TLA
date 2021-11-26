@@ -9,7 +9,7 @@
     int intval;
 %}
 
-INICIO "inicio:"
+INICIO "inicio:\n"
 FIN "fin"
 NUM "num "
 LETRAS "letras "
@@ -42,6 +42,7 @@ MODULO_IGUAL "%="
 NOMBRE var_[a-z|A-Z|0-9|_]+
 TEXTO ["][^\n]*["]
 IMPRIMIR_VAR "imprimir"
+LEER_VAR "leer"
 IMPRIMIR_VAR_LINEA "imprimirln"
 NOMBRE_CONST const_[a-z|A-Z|0-9|_]+
 DEF "definicion:"
@@ -77,6 +78,7 @@ nl  "\n"
 {OR}                    return OR;
 {WHILE_VAR}             return WHILE_VAR;
 {IMPRIMIR_VAR}          return IMPRIMIR_VAR;
+{LEER_VAR}              return LEER_VAR;
 {IMPRIMIR_VAR_LINEA}    return IMPRIMIR_VAR_LINEA;
 {MULTIPLICACION}        return MULTIPLICACION;
 {SUMA}                  return SUMA;
@@ -96,6 +98,7 @@ nl  "\n"
 {COMA}                  return COMA;
 "/*"                    { comment(); }
 "//".*                  { /* consume //-comment */ }
+.                       ;
 %%
 
 
