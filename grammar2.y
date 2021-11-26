@@ -9,7 +9,7 @@ int yylex();
 extern char *yytext;
 extern int yylineno;
 int i = 0;
-int intval; //TODO: ver si sigue andando todo sin esta linea adentro del %{ %}
+//int intval; //TODO: ver si sigue andando todo sin esta linea adentro del %{ %}
 %}
 
 %union{
