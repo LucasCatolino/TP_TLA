@@ -3,6 +3,7 @@
     #include "y.tab.h"
     #include <string.h>
     static void yyerror(char* s);
+    static void comment(void);
     int intval;
 %}
 
@@ -72,6 +73,8 @@ IMPRIMIR_VAR "imprimir"
 {DIVISION_IGUAL}        return DIVISION_IGUAL;
 {MODULO_IGUAL}          return MODULO_IGUAL;
 {TEXTO}                 {strcpy(yylval.texto, yytext); return TEXTO;}
+"/*"                    { comment(); }
+"//".*                  { /* consume //-comment */ }
 .                       ;
 %%
 

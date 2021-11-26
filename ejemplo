@@ -1,5 +1,9 @@
+/* Ejemplo de bloque
+*  con comentarios
+*  sin importancia
+*/
 inicio:
-    num var_paulo = 1;
+    num var_paulo = 1; //Esto es un comentario
     num var_londro = 3;
     var_londro = 2 + 2;
     var_londro += 3;
