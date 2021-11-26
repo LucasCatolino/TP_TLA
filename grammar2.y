@@ -24,17 +24,17 @@
 #include "list.h"
 static void yyerror(char *s);
 int yylex();
-int intval;
 extern char *yytext;
 extern int *yylineno;
 %}
+//int intval; //TODO: ver si sigue andando todo sin esta linea adentro del %{ %}
 
 %union{
     char texto[256];
     int numero;
 }
 
-%token INICIO DEF FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR MULTIPLICACION SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL IMPRIMIR_VAR LETRAS
+%token INICIO DEF FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR MULTIPLICACION SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL IMPRIMIR_VAR LETRAS ASIGNACION_IGUAL
 
 %token <texto> NOMBRE
 %token <texto> TEXTO
@@ -109,7 +109,7 @@ sentencia:
            |imprimir
         ;
 
-operacion_sobre_variable_igual: variable operador_igual variable
+operacion_sobre_variable_igual: variable operador_igual variable 
 
 multiple_operadores: operador variable
                     | operador variable multiple_operadores
@@ -133,6 +133,7 @@ operador_igual:
         |MULTIPLICACION_IGUAL {printf("*=");}
         |DIVISION_IGUAL {printf("/=");}
         |MODULO_IGUAL {printf("%%=");}
+        |ASIGNACION_IGUAL {printf("=");}
         ;
 
 nueva_variable:
@@ -233,9 +234,9 @@ and: AND {printf(" && ");}
     ;
 
 variable:
-            NOMBRE  {printf("%s",$1);}
+            NOMBRE  {if(find($1)!=NULL){printf("%s",$1);} else {yyerror("Variable not found");}}
             |F_INT
-            // | nombre_char
+            |F_CHAR
             ;
 
 comparador:

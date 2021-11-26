@@ -12,6 +12,7 @@ inicio:
     num var_londro = 3;
     var_londro = 2 + 2;
     var_londro += 3;
+    var_londro := 5;
     var_londro = 2 / var_paulo * 3;
     var_londro = var_paulo + var_londro;
     si (var_paulo < 2) inicio sentencia
@@ -20,5 +21,6 @@ inicio:
         imprimir("estoy adentro del if");
     terminar
     letras var_txt = "hola";
+    var_txt := "chau";
     imprimir("hola");
 fin

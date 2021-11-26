@@ -12,6 +12,7 @@ FIN "fin"
 NUM "num"
 LETRAS "letras"
 ASIGN_VAR "="
+ASIGNACION_IGUAL ":="
 IGUAL "=="
 MAYOR ">"
 MAYOR_IGUAL ">="
@@ -77,6 +78,7 @@ DEF "definicion:"
 {MULTPLICACION_IGUAL}   return MULTPLICACION_IGUAL;
 {DIVISION_IGUAL}        return DIVISION_IGUAL;
 {MODULO_IGUAL}          return MODULO_IGUAL;
+{ASIGNACION_IGUAL}      return ASIGNACION_IGUAL;
 {TEXTO}                 {strcpy(yylval.texto, yytext); return TEXTO;}
 "/*"                    { comment(); }
 "//".*                  { /* consume //-comment */ }
@@ -86,7 +88,6 @@ DEF "definicion:"
 static void comment(void)
 {
     int c;
-    int first= yylineno;
     while ((c = input()) != 0){
         if (c == '\n') {
             yylineno++;
