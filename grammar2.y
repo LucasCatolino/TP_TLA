@@ -20,7 +20,7 @@ int i = 0;
 %token INICIO DEF FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR
 %token IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR IMPRIMIR_VAR_LINEA MULTIPLICACION
 %token SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL
-%token IMPRIMIR_VAR IMPRIMIR_VAR_LN LETRAS ASIGNACION_IGUAL CONCAT_VAR COMA PARENTESIS_ABRE PARENTESIS_CIERRA LEER_VAR
+%token IMPRIMIR_VAR IMPRIMIR_VAR_LN LETRAS ASIGNACION_IGUAL CONCAT_VAR COMA PARENTESIS_ABRE PARENTESIS_CIERRA LEER_VAR ERROR_COMENTARIO
 
 %token <texto> NOMBRE
 %token <texto> TEXTO
@@ -81,6 +81,7 @@ lista_sentencias:
         | sentencia fin_sentencia lista_sentencias
         | condicional lista_sentencias 
         | condicional
+        | ERROR_COMENTARIO {yyerror("comentario sin cerrar");}
         ;
 
 lista_sentencias_bloques: 
@@ -93,8 +94,15 @@ lista_sentencias_bloques:
 // fin_sentencia → FIN_LINEA
 fin_sentencia:
         FIN_LINEA {printf(";");}
+        | FIN_LINEA ERROR_COMENTARIO {yyerror("comentario sin cerrar");}
+        | ERROR_COMENTARIO {yyerror("comentario sin cerrar");}
         ;
-
+/*
+error:
+        //ERROR_COMENTARIO {yyerror("error en comentario");}
+        ERROR_COMENTARIO {printf(";");}
+        ;
+*/
 // sentencia → nueva_variable | operacion_sobre_variable //| WHILE | IF_ELSE | SWITCH_CASE
 sentencia:
         nueva_variable
@@ -102,7 +110,7 @@ sentencia:
         | operacion_sobre_variable_igual
         | imprimir
         | concat
-        |leer
+        | leer
         ;
 
 sentencia_bloques:

@@ -1,3 +1,16 @@
+/*
+Falta:
+    • operaciones sobre variables char (replace)
+    • fscan (sabado)
+    • buen feedback de errores (PARECE Q ESTA)
+    • idea "diferencial" del lenguaje
+        ♥ traductor de C para facilitar el aprendizaje del mismo
+        ♥ anios bisiestos
+        ♥ signos en base a fecha de nacimiento
+        ♥ dia en una fecha dada
+    • 
+*/
+
 /* Ejemplo de bloque
 *  con comentarios
 *  sin importancia
@@ -7,7 +20,7 @@ definicion:
     const_numero = 4
     //const_numero = 5
     const_numero2 = 2
-    asd
+
 
 inicio:
     num var_paulo = -100; //Esto es un comentario
@@ -52,15 +65,3 @@ inicio:
     //reversa (var_txt);
 fin
 
-/*
-Falta:
-    • operaciones sobre variables char (replace)
-    • fscan (sabado)
-    • buen feedback de errores (PARECE Q ESTA)
-    • idea "diferencial" del lenguaje
-        ♥ traductor de C para facilitar el aprendizaje del mismo
-        ♥ anios bisiestos
-        ♥ signos en base a fecha de nacimiento
-        ♥ dia en una fecha dada
-    • 
-*/

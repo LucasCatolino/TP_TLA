@@ -5,7 +5,7 @@
     #include "y.tab.h"
     #include <string.h>
     static void yyerror(char* s);
-    static void comment(void);
+    static int comment(void);
     int intval;
 %}
 
@@ -96,13 +96,13 @@ nl  "\n"
 {PARENTESIS_ABRE}       return PARENTESIS_ABRE;
 {PARENTESIS_CIERRA}     return PARENTESIS_CIERRA;
 {COMA}                  return COMA;
-"/*"                    { comment(); }
+"/*"                    { if (comment()) return ERROR_COMENTARIO;}
 "//".*                  { /* consume //-comment */ }
 .                       ;
 %%
 
 
-static void comment(void)
+static int comment(void)
 {
     int c;
     int first= yylineno;
@@ -118,15 +118,18 @@ static void comment(void)
                 yylineno++;
             }
             if (c == '/') {
-                return;
+                return 0;
             }
             if (c == 0) {
                 break;
             }
         }
     }
+    fprintf(stderr, "---------------------ERROR---------------------\n");
     fprintf(stderr, "Error: abre comentario en linea %d\n", first);
+    fprintf(stderr, "-----------------------------------------------\n");
     yyerror("comentario sin terminar");
+    return 1;
 }
 
 static void yyerror(char* s){
@@ -134,6 +137,9 @@ static void yyerror(char* s){
         if (yytext[0] == '\n'){
             yytext[0] = '\\';
         }
-        fprintf(stderr, "Error: %s en linea %d, simbolo %c\n", s, yylineno, yytext[0]);
+        fprintf(stderr, "---------------------ERROR---------------------\n");
+        fprintf(stderr, "Error: %s en linea %d\n", s, yylineno);
+        fprintf(stderr, "-----------------------------------------------\n");
+        exit(-1);
     }
 }
