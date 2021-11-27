@@ -44,12 +44,16 @@ S:
 
 //INICIO_PROGRAMA → INICIO
 INICIO_PROGRAMA:
-        INICIO {printf("#include <stdio.h> \n #include <stdlib.h> \n #include \"list.h\" \n #include \"stdio.h\" \n #include \"string.h\" \n int main(){ ");}
+        INICIO {printf("//Las librerias a usar se incluyen en esta seccion de la siguiente manera:\n");
+                printf("#include <stdio.h> \n#include <stdlib.h> \n#include \"list.h\" \n#include \"stdio.h\" \n#include \"string.h\" \n\n");
+                printf("//El main es lo que se va a ejecutar, y se define de la siguiente manera:\n");
+                printf("int main(){ \n");}
         ;
 
 //FIN_PROGRAMA → FIN
 FIN_PROGRAMA:
-        FIN {printf("}\n");}
+        FIN {printf("}");
+             printf(" //Una vez finalizado el main, finaliza el programa\n");}
         ;
 
 // PROGRAMA → lista_sentencias
@@ -87,7 +91,7 @@ lista_sentencias_bloques:
 
 // fin_sentencia → FIN_LINEA
 fin_sentencia:
-        FIN_LINEA {printf(";");}
+        FIN_LINEA {printf(";\n");}
         | ERROR_COMENTARIO {yyerror("comentario sin cerrar");}
         ;
 
@@ -106,13 +110,13 @@ sentencia_bloques:
         | operacion_sobre_variable_igual
         | imprimir
         | concat
-        |leer
+        | leer
         ;
 
 operacion_sobre_variable_igual:
         variable_int operador_igual F_INT 
-        |variable_int operador_igual variable_int
-        |variable_int operador_igual const_var
+        | variable_int operador_igual variable_int
+        | variable_int operador_igual const_var
          ;
                         
 variable_int: NOMBRE {struct node * aux = find($1);  if(aux == NULL || aux->is_char){yyerror("tipo de argumento invalido");}else{printf("%s",$1);}}
@@ -126,14 +130,14 @@ multiple_operadores:
         | operador variable_int multiple_operadores
         | operador F_INT
         | operador F_INT multiple_operadores
-        |operador const_var
+        | operador const_var
         | operador const_var multiple_operadores
               ;
                             
 operacion_sobre_variable: // Puede haber un tema con la paridad en los parametros
         variable_int ASIGNACION variable_int  multiple_operadores
-        |variable_int ASIGNACION F_INT  multiple_operadores
-        |variable_int ASIGNACION const_var multiple_operadores 
+        | variable_int ASIGNACION F_INT  multiple_operadores
+        | variable_int ASIGNACION const_var multiple_operadores 
         ;
 
 operador:
@@ -155,18 +159,18 @@ operador_igual:
 
 nueva_variable:
         tipo_int nombre_int ASIGNACION F_INT
-        | tipo_int nombre_int ASIGNACION NOMBRE_CONST {if(find($4)!=NULL)printf("%s",$4);else{yyerror("Constante no existe");};}
+        | tipo_int nombre_int ASIGNACION NOMBRE_CONST {if(find($4)!=NULL)printf("%s",$4);else{yyerror("constante no existe");};}
         | tipo_char nombre_char ASIGNACION F_CHAR
         ;
 
 // cons: CONSTANTE {printf("#define ");}
 
 tipo_int:
-        NUM {printf("int ");}
+        NUM {printf("//Las variables de tipo int se definen de la siguiente manera:\n"); printf("int ");}
         ;
 
 tipo_char:
-        LETRAS {printf("char *");}
+        LETRAS {printf("//Las variables de tipo string se definen de la siguiente manera:\n"); printf("char *");}
         ;
 
 concat:
@@ -177,7 +181,8 @@ concat:
                 if(first == NULL || second == NULL || (!first->is_char || !second->is_char)){
                         yyerror("argumento invalido");
                 }else{
-                        printf("char * aux%d = calloc(sizeof(char),(strlen(%s)+strlen(%s)));strcat(aux%d,%s);strcat(aux%d,%s); %s = aux%d",i,first->name_var, second->name_var,i,first->name_var,i, second->name_var,first->name_var,i);
+                        printf("//Para concatenar dos strings:\n");
+                        printf("char * aux%d = calloc(sizeof(char), (strlen(%s)+strlen(%s)));\nstrcat(aux%d,%s);\nstrcat(aux%d,%s);\n%s = aux%d",i,first->name_var, second->name_var,i,first->name_var,i, second->name_var,first->name_var,i);
                         i+=1;
                 }
         } 
@@ -193,7 +198,8 @@ concat:
                         if(auxSTR == NULL){
                                 yyerror("Error al allocar memoria en concat");
                         }
-                        printf("char * aux%d = calloc(sizeof(char),(strlen(%s)+strlen(%s)));strcat(aux%d,%s);strcat(aux%d,%s);%s = aux%d",i,first->name_var, auxSTR,i,first->name_var,i, auxSTR,first->name_var,i);
+                        printf("//Para concatenar dos strings:\n");
+                        printf("char * aux%d = calloc(sizeof(char),(strlen(%s)+strlen(%s)));\nstrcat(aux%d,%s);\nstrcat(aux%d,%s);\n%s = aux%d",i,first->name_var, auxSTR,i,first->name_var,i, auxSTR,first->name_var,i);
                         i+=1;
                         free(auxSTR);
                 }
@@ -211,10 +217,12 @@ leer:
                         yyerror("la variable no esta definida");
                 }
                 if(aux->is_char){
-                printf("char * aux%d = calloc(sizeof(char),%d);scanf(\"%%s\",aux%d);%s = aux%d",i,MAX_READEABLE_LENGTH,i,aux->name_var,i);
-                i+=1;
+                        printf("//Para ingresar datos por consola:\n");
+                        printf("char * aux%d = calloc(sizeof(char),%d);\nscanf(\"%%s\",aux%d);\n%s = aux%d",i,MAX_READEABLE_LENGTH,i,aux->name_var,i);
+                        i+=1;
                 }else{
-                        printf("int aux%d = 0;;scanf(\"%%d\",&aux%d);%s = aux%d",i,i,aux->name_var,i);
+                        printf("//Para ingresar datos por consola:\n");
+                        printf("int aux%d = 0;;\nscanf(\"%%d\",&aux%d);\n%s = aux%d",i,i,aux->name_var,i);
                         i+=1;
                 }
 
@@ -228,8 +236,9 @@ imprimir:
                 char * to_concat = "\\n";
                 strncpy(aux+strlen($2)-1,to_concat,strlen(to_concat));
                 aux[strlen($2)+1]='\0';
-            printf("printf(%s\")", aux);
-            free(aux); 
+                printf("//Para imprimir por consola:\n");
+                printf("printf(%s\")", aux);
+                free(aux); 
             }
         | IMPRIMIR_VAR PARENTESIS_ABRE TEXTO PARENTESIS_CIERRA { printf("printf(%s)", $3) ; }
         | IMPRIMIR_VAR_LINEA PARENTESIS_ABRE TEXTO PARENTESIS_CIERRA { 
@@ -238,8 +247,9 @@ imprimir:
                 char * to_concat = "\\n";
                 strncpy(aux+strlen($3)-1,to_concat,strlen(to_concat));
                 aux[strlen($3)+1]='\0';
-            printf("printf(%s\")", aux);
-            free(aux); 
+                printf("//Para imprimir por consola:\n");
+                printf("printf(%s\")", aux);
+                free(aux); 
             }
         | IMPRIMIR_VAR NOMBRE {
                 struct node * node = find($2);
@@ -247,10 +257,12 @@ imprimir:
                         yyerror("variable invalida");
                 }else{
                    if(node->is_char){
-                         printf("printf(\"%%s\", %s)", (char *)node->name_var);
+                        printf("//Para imprimir por consola:\n");
+                        printf("printf(\"%%s\", %s)", (char *)node->name_var);
                     }
                     else{
-                         printf("printf(\"%%d\", %s)", (char *)node->name_var);
+                        printf("//Para imprimir por consola:\n");
+                        printf("printf(\"%%d\", %s)", (char *)node->name_var);
                         } 
                 }
         }
@@ -260,10 +272,12 @@ imprimir:
                         yyerror("variable invalida");
                 }else{
                    if(node->is_char){
-                         printf("printf(\"%%s\", %s)", (char *)node->name_var);
+                        printf("//Para imprimir por consola:\n");
+                        printf("printf(\"%%s\", %s)", (char *)node->name_var);
                     }
                     else{
-                         printf("printf(\"%%d\", %s)", (char *)node->name_var);
+                        printf("//Para imprimir por consola:\n");
+                        printf("printf(\"%%d\", %s)", (char *)node->name_var);
                         } 
                 }
         }
@@ -273,10 +287,12 @@ imprimir:
                         yyerror("variable invalida");
                 }else{
                    if(node->is_char){
-                         printf("printf(\"%%s \\n\", %s)", (char *)node->name_var);
+                        printf("//Para imprimir por consola:\n");
+                        printf("printf(\"%%s \\n\", %s)", (char *)node->name_var);
                     }
                     else{
-                         printf("printf(\"%%d \\n\", %s)", (char *)node->name_var);
+                        printf("//Para imprimir por consola:\n");
+                        printf("printf(\"%%d \\n\", %s)", (char *)node->name_var);
                         } 
                 }
         }
@@ -286,14 +302,16 @@ imprimir:
                         yyerror("variable invalida");
                 }else{
                    if(node->is_char){
-                         printf("printf(\"%%s \\n\", %s)", (char *)node->name_var);
+                        printf("//Para imprimir por consola:\n");
+                        printf("printf(\"%%s \\n\", %s)", (char *)node->name_var);
                     }
                     else{
-                         printf("printf(\"%%d \\n\", %s)", (char *)node->name_var);
+                        printf("//Para imprimir por consola:\n");
+                        printf("printf(\"%%d \\n\", %s)", (char *)node->name_var);
                         } 
                 }
         }
-        | error  {yyerror("en compilacion");}
+        | error {yyerror("en compilacion");}
         ;
 
 // asignacion --> TIPO_INT NOMBRE = INTEGER; | TIPO_CHAR NOMBRE = CHAR | NOMBRE = CHAR | NOMBRE = INTEGER;
@@ -323,7 +341,7 @@ nombre_char:
 
 nombre_const:
         NOMBRE_CONST {if(find($1) == NULL){
-                                insertFirst($1,0); printf("#define %s ",$1);
+                                insertFirst($1,0); printf("//Las constantes se definen de la siguiente manera:\n"); printf("#define %s ",$1);
                         } else{
                                 yyerror("variable duplicada");
                         }}
@@ -351,23 +369,23 @@ estructura_else:
         ;
 
 definicion_if:
-        IF_VAR {printf("if(");}
+        IF_VAR {printf("//Las condiciones del tipo if se definen de la siguiente manera:\n");printf("if(");}
         ;
 
 definicion_while:
-        WHILE_VAR {printf("while(");}
+        WHILE_VAR {printf("//Los ciclos while se definen de la siguiente manera:\n");printf("while(");}
         ;
 
 definicion_else:
-        ELSE_VAR {printf("else{");}
+        ELSE_VAR {printf("else{\n");}
         ;
 
 inicio_condicional:
-        INICIO_CONDICIONAL {printf("){");}
+        INICIO_CONDICIONAL {printf("){\n");}
         ;
 
 fin_condicional:
-        FIN_CONDICIONAL {printf("}");}
+        FIN_CONDICIONAL {printf("}\n");}
         ;
 
 

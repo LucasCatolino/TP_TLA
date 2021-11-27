@@ -20,4 +20,4 @@ else
     echo "Aviso: falta corregir errores para compilar sin problemas"
 fi
 
-rm aux.c
+#rm aux.c
