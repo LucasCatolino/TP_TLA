@@ -105,7 +105,7 @@ nl  "\n"
 static int comment(void)
 {
     int c;
-    int first= yylineno;
+    int first= yylineno + 1;
     while ((c = input()) != 0){
         if (c == '\n') {
             yylineno++;

@@ -94,15 +94,9 @@ lista_sentencias_bloques:
 // fin_sentencia → FIN_LINEA
 fin_sentencia:
         FIN_LINEA {printf(";");}
-        | FIN_LINEA ERROR_COMENTARIO {yyerror("comentario sin cerrar");}
         | ERROR_COMENTARIO {yyerror("comentario sin cerrar");}
         ;
-/*
-error:
-        //ERROR_COMENTARIO {yyerror("error en comentario");}
-        ERROR_COMENTARIO {printf(";");}
-        ;
-*/
+
 // sentencia → nueva_variable | operacion_sobre_variable //| WHILE | IF_ELSE | SWITCH_CASE
 sentencia:
         nueva_variable
