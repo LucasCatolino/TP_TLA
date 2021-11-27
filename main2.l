@@ -126,7 +126,7 @@ static int buen_comentario(void)
         }
     }
     fprintf(stderr, "---------------------ERROR---------------------\n");
-    fprintf(stderr, "Error: abre comentario en linea %d\n", first);
+    fprintf(stderr, "Error: Abre comentario en linea %d\n", first);
     fprintf(stderr, "-----------------------------------------------\n");
     yyerror("comentario sin terminar");
     return 0;

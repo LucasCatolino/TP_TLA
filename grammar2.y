@@ -106,6 +106,7 @@ sentencia_bloques:
         | operacion_sobre_variable_igual
         | imprimir
         | concat
+        |leer
         ;
 
 operacion_sobre_variable_igual:
@@ -190,7 +191,7 @@ concat:
                         char *auxSTR = malloc(sizeof(char)* (strlen($5)+1));
                         strcpy(auxSTR,$5);
                         if(auxSTR == NULL){
-                        printf("ERROR MALLOC");
+                                yyerror("Error al allocar memoria en concat");
                         }
                         printf("char * aux%d = calloc(sizeof(char),(strlen(%s)+strlen(%s)));strcat(aux%d,%s);strcat(aux%d,%s);%s = aux%d",i,first->name_var, auxSTR,i,first->name_var,i, auxSTR,first->name_var,i);
                         i+=1;
@@ -199,35 +200,7 @@ concat:
                
         }  
 
-// reverse:
-//         REVERSE_VAR '(' NOMBRE ')' {
-//             struct node * var =find($3);
-            
-//             if( var != NULL && var->is_char ){
 
-//                 int i, j, count = 0;
-//                 while (str[count] != '\0')
-//                 {
-//                     count++;
-//                 }
-//                 j = count - 1;
-
-//                 //reversing the string by swapping
-//                 for (i = 0; i < count; i++)
-//                 {
-//                     rev[i] = str[j];
-//                     j--;
-//                 }
-
-//                 printf("\nString After Reverse: %s", rev);
-
-
-
-//                 printf("printf(\"%%s\",%s)",strrev(var->name_var));
-//             }else{
-//                 yyerror("Argumento invalido en funcion \"reverse\"");
-//             }
-//         }
 
 
 leer:
@@ -320,7 +293,6 @@ imprimir:
                         } 
                 }
         }
-        // | IMPRIMIR_VAR PARENTESIS_ABRE NOMBRE PARENTESIS_CIERRA {printf("printf(%s)", $3) ;}
         | error  {yyerror("en compilacion");}
         ;
 
@@ -361,7 +333,6 @@ condicional:
         estructura_if 
         | estructura_if estructura_else
         | estructura_while 
-        // | SWITCH_CASE
         ;
 
 estructura_if:
@@ -416,11 +387,6 @@ and:
         AND {printf(" && ");}
         ;
 
-// variable: UNUSED TYPE
-//         NOMBRE  {if(find($1)!=NULL){printf("%s",$1);} else {yyerror("variable not found");}}
-//         //| F_INT
-//         //| F_CHAR
-        ;
 
 comparador:
         IGUAL {printf("==");}
@@ -437,34 +403,6 @@ condicion_logica:
         | F_INT comparador variable_int
         ;
                    
-
-// // lista_CASE → CASE | lista CASE
-// lista_CASE:
-//            CASE 
-//            | lista_CASE CASE
-//            ;
-
-// // SWITCH_CASE → switch ( i ) { lista_CASE } | switch ( i ) { lista_CASE DEFAULT}
-// SWITCH_CASE:
-//             switch '(' i ')' '{' lista_CASE '}' 
-//             | switch '(' i ')' '{' lista_CASE DEFAULT'}'
-//             ;
-
-// // CASE → case c: sentencia | case c: {lista_sentencias}
-// CASE:
-//     case c ':' sentencia
-//     | case c ':' '{' lista_sentencias '}'
-//     ;
-
-// // DEFAULT → default: sentencia | default: {lista_sentencias}
-// DEFAULT:
-//         default ':' sentencia 
-//         | default ':' '{' lista_sentencias '}'
-//         ;
-
-//     INTEGER {$$ = intval;}
-//     | CHAR
-//     ;
 %%
 
 
