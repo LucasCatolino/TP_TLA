@@ -1,5 +1,5 @@
 clean: 
-	rm -f lex.yy.c y.tab.c y.tab.h main
+	rm -f lex.yy.c y.tab.c y.tab.h main tu_codigo_en.c
 
 1: 
 	yacc -d grammar.y
