@@ -1,13 +1,13 @@
 clean: 
-	rm -f lex.yy.c y.tab.c y.tab.h main2
+	rm -f lex.yy.c y.tab.c y.tab.h main
 
 1: 
-	yacc -d grammar2.y
+	yacc -d grammar.y
 
 2: 
-	lex main2.l
+	lex main.l
 
 3: 
-	gcc -Wall -o main2 list.c lex.yy.c y.tab.c
+	gcc -Wall -o main list.c lex.yy.c y.tab.c
 
 all: clean 1 2 3

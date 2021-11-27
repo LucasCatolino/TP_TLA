@@ -1,47 +1,113 @@
 %option noyywrap
+%option nounput
+
 %{
     #include "y.tab.h"
-
-    extern int intval;
-    extern int boolval;
-    //extern char[] stringval;
-    
+    #include <string.h>
     static void yyerror(char* s);
-    static void comment(void);
+    static int buen_comentario(void);
+    int intval;
 %}
 
-integer [0-9]+
-bool    ["true","false"]
-nl      \n
-SP  (u8|u|U|L)
-ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
-WS  [ \t\v\n\f]
-
-
+INICIO "inicio:"
+FIN "fin"
+NUM "num "
+LETRAS "letras "
+ASIGN_VAR "="
+ASIGNACION_IGUAL ":="
+DISTINTO "!="
+IGUAL "=="
+MAYOR ">"
+MAYOR_IGUAL ">="
+MENOR "<"
+MENOR_IGUAL "<="
+INTEGER [-]?[0-9]+
+FIN_LINEA ";"
+FIN_CONDICIONAL "terminar"
+ELSE_VAR "sino"
+INICIO_CONDICIONAL "inicio sentencia"
+IF_VAR "si"
+WHILE_VAR "mientras"
+AND "y"
+OR "o"
+MULTIPLICACION "*"
+SUMA "+"
+RESTA "-"
+DIVISION "/"
+MODULO "%"
+MAS_IGUAL "+="
+MENOS_IGUAL "-="
+MULTIPLICACION_IGUAL "*="
+DIVISION_IGUAL "/="
+MODULO_IGUAL "%="
+NOMBRE var_[a-z|A-Z|0-9|_]+
+TEXTO ["][^\n]*["]
+IMPRIMIR_VAR "imprimir"
+LEER_VAR "leer"
+IMPRIMIR_VAR_LINEA "imprimirln"
+NOMBRE_CONST const_[a-z|A-Z|0-9|_]+
+DEF "definicion:"
+CONCAT_VAR "concatenar"
+PARENTESIS_ABRE "("
+PARENTESIS_CIERRA ")"
+COMA ","
+nl  "\n"
 
 %%
-[ \t]+  ;
-{integer}    {sscanf(yytext, "%d", &intval);  return INTEGER;}
-{bool}       {sscanf(yytext, "%s", &boolval);  return BOOLEAN;}
-{nl}         {yylineno++; return NEWLINE;}
-"=="        return EQ;
-"!="        return NOTEQ;
-">="        return GE;
-"<="        return LE;
-"si"        return IF;
-"entonces"  return THEN;
-"}"         return EOB;
-"imprimir"  {return PRINT;}
-"alfabeto" 	printf("de la ‘a’ a la 'z' \n");
-.            {return yytext[0];}
-"/*"        { comment(); }
-"//".*      { /* consume //-comment */ }
+{nl}                    {yylineno++; ;}
+[ \t]+                  ;
+{INICIO}                return INICIO;
+{DEF}                   return DEF;
+{FIN}                   return FIN;
+{INTEGER}               {yylval.numero = atoi(yytext); return INTEGER;}
+{NUM}                   return NUM;
+{LETRAS}                return LETRAS;
+{ASIGN_VAR}             return ASIGN_VAR;
+{NOMBRE}                {strcpy(yylval.texto, yytext); return NOMBRE;}
+{NOMBRE_CONST}          {strcpy(yylval.texto, yytext); return NOMBRE_CONST;}
+{DISTINTO}              return DISTINTO;
+{INICIO_CONDICIONAL}    return INICIO_CONDICIONAL;
+{FIN_CONDICIONAL}       return FIN_CONDICIONAL;
+{IF_VAR}                return IF_VAR;
+{FIN_LINEA}             return FIN_LINEA;
+{ELSE_VAR}              return ELSE_VAR;
+{IGUAL}                 return IGUAL;
+{MENOR}                 return MENOR;
+{MAYOR}                 return MAYOR;
+{MAYOR_IGUAL}           return MAYOR_IGUAL;
+{MENOR_IGUAL}           return MENOR_IGUAL;
+{AND}                   return AND;
+{OR}                    return OR;
+{WHILE_VAR}             return WHILE_VAR;
+{IMPRIMIR_VAR}          return IMPRIMIR_VAR;
+{LEER_VAR}              return LEER_VAR;
+{IMPRIMIR_VAR_LINEA}    return IMPRIMIR_VAR_LINEA;
+{MULTIPLICACION}        return MULTIPLICACION;
+{SUMA}                  return SUMA;
+{RESTA}                 return RESTA;
+{DIVISION}              return DIVISION;
+{MODULO}                return MODULO;
+{MAS_IGUAL}             return MAS_IGUAL;
+{MENOS_IGUAL}           return MENOS_IGUAL;
+{MULTIPLICACION_IGUAL}   return MULTIPLICACION_IGUAL;
+{DIVISION_IGUAL}        return DIVISION_IGUAL;
+{MODULO_IGUAL}          return MODULO_IGUAL;
+{ASIGNACION_IGUAL}      return ASIGNACION_IGUAL;
+{TEXTO}                 {strcpy(yylval.texto, yytext); return TEXTO;}
+{CONCAT_VAR}            return CONCAT_VAR;
+{PARENTESIS_ABRE}       return PARENTESIS_ABRE;
+{PARENTESIS_CIERRA}     return PARENTESIS_CIERRA;
+{COMA}                  return COMA;
+"/*"                    { if (!buen_comentario()) return ERROR_COMENTARIO;}
+"//".*                  { /* consume //-comment */ }
+.                       ;
 %%
 
-static void comment(void)
+
+static int buen_comentario(void)
 {
     int c;
-    int first= yylineno;
+    int first= yylineno + 1;
     while ((c = input()) != 0){
         if (c == '\n') {
             yylineno++;
@@ -54,14 +120,18 @@ static void comment(void)
                 yylineno++;
             }
             if (c == '/') {
-                return;
+                return 1;
             }
             if (c == 0) {
                 break;
             }
         }
     }
+    fprintf(stderr, "---------------------ERROR---------------------\n");
+    fprintf(stderr, "Error: Abre comentario en linea %d\n", first);
+    fprintf(stderr, "-----------------------------------------------\n");
     yyerror("comentario sin terminar");
+    return 0;
 }
 
 static void yyerror(char* s){
@@ -69,6 +139,9 @@ static void yyerror(char* s){
         if (yytext[0] == '\n'){
             yytext[0] = '\\';
         }
-        printf("Error: %s en linea %d, simbolo %c\n", s, yylineno, yytext[0]);
+        fprintf(stderr, "---------------------ERROR---------------------\n");
+        fprintf(stderr, "Error: %s en linea %d\n", s, yylineno);
+        fprintf(stderr, "-----------------------------------------------\n");
+        exit(-1);
     }
 }

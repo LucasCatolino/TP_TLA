@@ -61,6 +61,5 @@ main2
 #Make file
 Makefile
 
-ejemplo
-aux.c
+tu_codigo_en.c
 ejecutable
