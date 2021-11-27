@@ -32,15 +32,6 @@ int i = 0;
 %type<numero> F_INT
 %type<texto> F_CHAR
 
-
-/*
-%left '+' '-'
-%left '*' '/'
-%left '>' '<'
-%left '='
-%left EQ GE LE NOTEQ
-%nonassoc UMINUS
-*/
 %start S /* simbolo sentencial */
 
 %%
@@ -66,13 +57,15 @@ PROGRAMA:
         lista_sentencias
         ;
 
+// DEFINICION → definicion_cons | definicion_cons definicion_cons
 DEFINICION:
         definicion_cons 
         | definicion_cons definicion_cons
         ;
 
+// definicion_cons → nombre_const ASIGNACION_CONS F_INT
 definicion_cons:
-        nombre_const ASIGNACION_CONS F_INT
+        nombre_const ASIGNACION_CONS F_INT {printf("\n");}
         ;
 
 // lista_sentencias → sentencia fin_sentencia | sentencia fin_sentencia lista_sentencias | condicional lista_sentencias | condicional
@@ -84,6 +77,7 @@ lista_sentencias:
         | ERROR_COMENTARIO {yyerror("comentario sin cerrar");}
         ;
 
+// lista_sentencias_bloques  sentencia_bloques fin_sentencia | sentencia_bloques fin_sentencia lista_sentencias_bloques | condicional lista_sentencias_bloques | condicional
 lista_sentencias_bloques: 
         sentencia_bloques fin_sentencia
         | sentencia_bloques fin_sentencia lista_sentencias_bloques
@@ -117,9 +111,13 @@ sentencia_bloques:
 operacion_sobre_variable_igual:
         variable_int operador_igual F_INT 
         |variable_int operador_igual variable_int
+        |variable_int operador_igual const_var
          ;
                         
-variable_int: NOMBRE {struct node * aux = find($1); if(aux == NULL || aux->is_char){yyerror("tipo de argumento invalido");}else{printf("%s",$1);}}
+variable_int: NOMBRE {struct node * aux = find($1);  if(aux == NULL || aux->is_char){yyerror("tipo de argumento invalido");}else{printf("%s",$1);}}
+                ;
+
+const_var: NOMBRE_CONST {struct node * aux = find($1); if(aux == NULL || aux->is_char){yyerror("tipo de argumento invalido");}else{printf("%s",$1);}}
                 ;
 
 multiple_operadores:
@@ -153,6 +151,7 @@ operador_igual:
 
 nueva_variable:
         tipo_int nombre_int ASIGNACION F_INT
+        | tipo_int nombre_int ASIGNACION NOMBRE_CONST {if(find($4)!=NULL)printf("%s",$4);else{yyerror("Constante no existe");};}
         | tipo_char nombre_char ASIGNACION F_CHAR
         ;
 
@@ -349,7 +348,7 @@ nombre_char:
 
 nombre_const:
         NOMBRE_CONST {if(find($1) == NULL){
-                                insertFirst($1,0); printf("#define %s",$1);
+                                insertFirst($1,0); printf("#define %s ",$1);
                         } else{
                                 yyerror("variable duplicada");
                         }}
