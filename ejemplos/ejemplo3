@@ -1,0 +1,29 @@
+inicio:
+
+num var_entrada = 0;
+imprimirln("Ingrese un año y te dire si es bisiesto.");
+leer(var_entrada);
+
+mientras (var_entrada < 0) inicio sentencia
+imprimirln("Ingrese un año mayor que 0 ");
+leer(var_entrada);
+terminar
+
+
+num var_mod4 = 0;
+var_mod4 = var_entrada % 4;
+
+num var_mod100 = 0;
+var_mod100 = var_entrada % 100;
+
+num var_mod400 = 0;
+var_mod400 = var_entrada % 400;
+
+si (var_mod4 == 0 y var_mod100 != 0 o var_mod400 == 0) inicio sentencia 
+    imprimirln("Es un año bisiesto!");
+terminar
+sino
+    imprimirln("No es un año bisiesto!");
+terminar
+
+fin

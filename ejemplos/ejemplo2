@@ -1,0 +1,18 @@
+
+// Ejemplo provisto en la consigna
+inicio:
+    num var_x = 6;
+    num var_y = 1;
+
+    mientras (var_x > 0) inicio sentencia
+        var_y = var_y * var_x;
+        var_x -=1;
+    terminar
+
+imprimir("El factorial de 6 es: ");
+imprimirln(var_y);
+imprimir("El valor de x+1 es: ");
+var_x +=1;
+imprimirln(var_x);
+
+fin

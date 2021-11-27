@@ -1,0 +1,27 @@
+definicion:
+    const_segundos_en_min = 60
+
+inicio:
+num var_segundos =0;
+
+imprimirln("Ingrese una cantidad de segundos y te dire cuantos minutos son.");
+leer(var_segundos);
+
+mientras (var_segundos < 0) inicio sentencia
+imprimirln("Ingrese una cantidad de segundos mayor que 0 y te dire cuantos minutos son.");
+leer(var_segundos);
+terminar
+
+num var_minutos = 0;
+
+var_minutos = var_segundos / const_segundos_en_min;
+
+imprimir("La cantidad de minutos son: ");
+imprimirln(var_minutos);
+
+fin
+
+
+
+
+

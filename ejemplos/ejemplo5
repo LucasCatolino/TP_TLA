@@ -1,0 +1,27 @@
+inicio:
+
+letras var_leido1 = "";
+letras var_leido2 = "";
+num var_cant = 0;
+num var_indice = 1;
+
+
+imprimirln("Ingrese la cantidad de palabras a concatenar ");
+leer(var_cant);
+
+letras var_salida = "Tus palabras concatenadas son: ";
+
+mientras(var_cant>0) inicio sentencia
+    imprimir("Ingrese la palabra numero ");
+    imprimir(var_indice);
+    imprimirln(" para concatenar. ");
+    leer(var_leido1);
+    concatenar(var_salida,var_leido1);
+    var_indice +=1;
+    var_cant -=1;
+
+terminar
+
+imprimirln(var_salida);
+
+fin

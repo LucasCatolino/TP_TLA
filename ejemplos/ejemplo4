@@ -1,0 +1,25 @@
+inicio:
+
+num var_entrada = 0;
+imprimirln("Ingrese un numero y le calculare su factorial");
+leer(var_entrada);
+num var_aux = 0;
+mientras (var_entrada < 0) inicio sentencia
+    imprimirln("Ingrese un numero mayor que 0 ");
+    leer(var_entrada);
+terminar
+var_aux := var_entrada;
+
+num var_salida = 1;
+
+mientras (var_entrada > 0) inicio sentencia
+    var_salida = var_salida * var_entrada;
+    var_entrada -=1;
+terminar
+
+imprimir("El factorial de ");
+imprimir(var_aux);
+imprimir(" es ");
+imprimirln(var_salida);
+
+fin
