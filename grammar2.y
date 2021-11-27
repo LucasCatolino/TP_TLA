@@ -19,7 +19,7 @@ int i = 0;
 
 %token INICIO DEF FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR
 %token IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR IMPRIMIR_VAR_LINEA MULTIPLICACION
-%token SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL
+%token SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL DISTINTO
 %token IMPRIMIR_VAR IMPRIMIR_VAR_LN LETRAS ASIGNACION_IGUAL CONCAT_VAR COMA PARENTESIS_ABRE PARENTESIS_CIERRA LEER_VAR ERROR_COMENTARIO
 
 %token <texto> NOMBRE
@@ -374,8 +374,8 @@ fin_condicional:
 // condicion → condicion_logica | condicion_AND | condicion_OR
 condicion:
         F_INT
-        | condicion_logica or condicion_logica
-        | condicion_logica and condicion_logica
+        | condicion_logica or condicion
+        | condicion_logica and condicion
         | condicion_logica
         ;
         
@@ -394,6 +394,7 @@ comparador:
         | MAYOR {printf(">");}   
         | MENOR_IGUAL {printf("<=");}
         | MAYOR_IGUAL {printf(">=");}
+        | DISTINTO {printf("!=");}
         ;
 
 condicion_logica:
