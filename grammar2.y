@@ -119,7 +119,7 @@ operacion_sobre_variable_igual:
         |variable_int operador_igual variable_int
          ;
                         
-variable_int: NOMBRE {struct node * aux = find($1); if(aux == NULL || aux->is_char){yyerror("Tipo de argumento invalido");}else{printf("%s",$1);}}
+variable_int: NOMBRE {struct node * aux = find($1); if(aux == NULL || aux->is_char){yyerror("tipo de argumento invalido");}else{printf("%s",$1);}}
                 ;
 
 multiple_operadores:
@@ -172,18 +172,18 @@ concat:
                 struct node * second =find($5);
 
                 if(first == NULL || second == NULL || (!first->is_char || !second->is_char)){
-                        yyerror("Argumento invalido");
+                        yyerror("argumento invalido");
                 }else{
                         printf("char * aux%d = calloc(sizeof(char),(strlen(%s)+strlen(%s)));strcat(aux%d,%s);strcat(aux%d,%s); %s = aux%d",i,first->name_var, second->name_var,i,first->name_var,i, second->name_var,first->name_var,i);
                         i+=1;
                 }
         } 
-        |CONCAT_VAR PARENTESIS_ABRE NOMBRE COMA TEXTO PARENTESIS_CIERRA {
+        | CONCAT_VAR PARENTESIS_ABRE NOMBRE COMA TEXTO PARENTESIS_CIERRA {
                 struct node * first =find($3);
         
 
                 if(first == NULL || (!first->is_char)){
-                        yyerror("Argumento invalido");
+                        yyerror("argumento invalido");
                 }else{
                         char *auxSTR = malloc(sizeof(char)* (strlen($5)+1));
                         strcpy(auxSTR,$5);
@@ -233,7 +233,7 @@ leer:
                 struct node * aux=find($3);
         
                 if(aux == NULL ){
-                        yyerror("La variable no esta definida");
+                        yyerror("la variable no esta definida");
                 }
                 if(aux->is_char){
                 printf("char * aux%d = calloc(sizeof(char),%d);scanf(\"%%s\",aux%d);%s = aux%d",i,MAX_READEABLE_LENGTH,i,aux->name_var,i);
@@ -269,7 +269,7 @@ imprimir:
         | IMPRIMIR_VAR NOMBRE {
                 struct node * node = find($2);
                 if(node == NULL){
-                        yyerror("Error, variable invalida");
+                        yyerror("variable invalida");
                 }else{
                    if(node->is_char){
                          printf("printf(\"%%s\", %s)", (char *)node->name_var);
@@ -282,7 +282,7 @@ imprimir:
         | IMPRIMIR_VAR PARENTESIS_ABRE NOMBRE PARENTESIS_CIERRA {
                 struct node * node = find($3);
                 if(node == NULL){
-                        yyerror("Error, variable invalida");
+                        yyerror("variable invalida");
                 }else{
                    if(node->is_char){
                          printf("printf(\"%%s\", %s)", (char *)node->name_var);
@@ -295,7 +295,7 @@ imprimir:
         | IMPRIMIR_VAR_LINEA NOMBRE {
                 struct node * node = find($2);
                 if(node == NULL){
-                        yyerror("Error, variable invalida");
+                        yyerror("variable invalida");
                 }else{
                    if(node->is_char){
                          printf("printf(\"%%s \\n\", %s)", (char *)node->name_var);
@@ -308,7 +308,7 @@ imprimir:
         | IMPRIMIR_VAR_LINEA PARENTESIS_ABRE NOMBRE PARENTESIS_CIERRA {
                 struct node * node = find($3);
                 if(node == NULL){
-                        yyerror("Error, variable invalida");
+                        yyerror("variable invalida");
                 }else{
                    if(node->is_char){
                          printf("printf(\"%%s \\n\", %s)", (char *)node->name_var);
@@ -340,18 +340,18 @@ F_CHAR:
         ;
 
 nombre_int:
-        NOMBRE { if(find($1) == NULL){insertFirst($1,0); printf("%s",$1);} else{yyerror("duplicated");}}
+        NOMBRE { if(find($1) == NULL){insertFirst($1,0); printf("%s",$1);} else{yyerror("variable duplicada");}}
         ;
 
 nombre_char:
-        NOMBRE {if(find($1) == NULL){insertFirst($1,1); printf("%s",$1);} else{yyerror("duplicated");}}
+        NOMBRE {if(find($1) == NULL){insertFirst($1,1); printf("%s",$1);} else{yyerror("variable duplicada");}}
         ;
 
 nombre_const:
         NOMBRE_CONST {if(find($1) == NULL){
                                 insertFirst($1,0); printf("#define %s",$1);
                         } else{
-                                yyerror("duplicated");
+                                yyerror("variable duplicada");
                         }}
         ;
 

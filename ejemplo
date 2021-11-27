@@ -50,7 +50,7 @@ inicio:
     letras var_vacia = "a";
     concatenar(var_vacia ,"hola");
     imprimirln(var_vacia);
-    concatenar(var_txt ,var_txt2);
+    concatenar(var_txt2 ,var_txt2);
     concatenar(var_txt ,var_txt2);
     concatenar(var_txt ,"chiao");
     imprimirln("Inserte palabra:");

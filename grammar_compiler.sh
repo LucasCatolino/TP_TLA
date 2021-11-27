@@ -17,7 +17,7 @@ then
     gcc aux.c -o $2
 
 else
-    echo "Correct errors to compile code correctly!"
+    echo "Aviso: falta corregir errores para compilar sin problemas"
 fi
 
-#rm aux.c
+rm aux.c
