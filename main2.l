@@ -5,7 +5,7 @@
     #include "y.tab.h"
     #include <string.h>
     static void yyerror(char* s);
-    static int comment(void);
+    static int buen_comentario(void);
     int intval;
 %}
 
@@ -96,13 +96,13 @@ nl  "\n"
 {PARENTESIS_ABRE}       return PARENTESIS_ABRE;
 {PARENTESIS_CIERRA}     return PARENTESIS_CIERRA;
 {COMA}                  return COMA;
-"/*"                    { if (comment()) return ERROR_COMENTARIO;}
+"/*"                    { if (!buen_comentario()) return ERROR_COMENTARIO;}
 "//".*                  { /* consume //-comment */ }
 .                       ;
 %%
 
 
-static int comment(void)
+static int buen_comentario(void)
 {
     int c;
     int first= yylineno + 1;
@@ -118,7 +118,7 @@ static int comment(void)
                 yylineno++;
             }
             if (c == '/') {
-                return 0;
+                return 1;
             }
             if (c == 0) {
                 break;
@@ -129,7 +129,7 @@ static int comment(void)
     fprintf(stderr, "Error: abre comentario en linea %d\n", first);
     fprintf(stderr, "-----------------------------------------------\n");
     yyerror("comentario sin terminar");
-    return 1;
+    return 0;
 }
 
 static void yyerror(char* s){
