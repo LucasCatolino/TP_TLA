@@ -9,7 +9,7 @@
     int intval;
 %}
 
-INICIO "inicio:\n"
+INICIO "inicio:"
 FIN "fin"
 NUM "num "
 LETRAS "letras "
