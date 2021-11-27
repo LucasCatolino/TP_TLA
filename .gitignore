@@ -60,3 +60,5 @@ main2
 
 #Make file
 Makefile
+aux.c
+ejecutable
