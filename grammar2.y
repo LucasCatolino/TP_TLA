@@ -117,7 +117,7 @@ operacion_sobre_variable_igual:
 variable_int: NOMBRE {struct node * aux = find($1);  if(aux == NULL || aux->is_char){yyerror("tipo de argumento invalido");}else{printf("%s",$1);}}
                 ;
 
-const_var: NOMBRE_CONST {struct node * aux = find($1); if(aux == NULL || aux->is_char){yyerror("tipo de argumento invalido");}else{printf("%s",$1);}}
+const_var: NOMBRE_CONST {struct node * aux = find($1); if(aux == NULL){yyerror("tipo de argumento invalido");}else{printf("%s",$1);}}
                 ;
 
 multiple_operadores:
@@ -125,11 +125,14 @@ multiple_operadores:
         | operador variable_int multiple_operadores
         | operador F_INT
         | operador F_INT multiple_operadores
-        ;
+        |operador const_var
+        | operador const_var multiple_operadores
+              ;
                             
 operacion_sobre_variable: // Puede haber un tema con la paridad en los parametros
         variable_int ASIGNACION variable_int  multiple_operadores
         |variable_int ASIGNACION F_INT  multiple_operadores
+        |variable_int ASIGNACION const_var multiple_operadores 
         ;
 
 operador:
