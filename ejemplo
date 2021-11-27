@@ -1,13 +1,26 @@
+/*
+Falta:
+    • operaciones sobre variables char (replace)
+    • fscan (sabado)
+    • buen feedback de errores (PARECE Q ESTA)
+    • idea "diferencial" del lenguaje
+        ♥ traductor de C para facilitar el aprendizaje del mismo
+        ♥ anios bisiestos
+        ♥ signos en base a fecha de nacimiento
+        ♥ dia en una fecha dada
+    • 
+*/
 
 /* Ejemplo de bloque
 *  con comentarios
 *  sin importancia
 */
 
-
 definicion:
     const_numero = 4
+    //const_numero = 5
     const_numero2 = 2
+
 
 inicio:
     num var_paulo = -100; //Esto es un comentario
@@ -37,22 +50,18 @@ inicio:
     letras var_vacia = "a";
     concatenar(var_vacia ,"hola");
     imprimirln(var_vacia);
-    concatenar(var_txt ,var_txt2);
+    concatenar(var_txt2 ,var_txt2);
     concatenar(var_txt ,var_txt2);
     concatenar(var_txt ,"chiao");
+    imprimirln("Inserte palabra:");
+    leer(var_txt);
+    imprimir("Palabra: ");
     imprimirln(var_txt);
+    imprimirln("Inserte numero:");
+    leer(var_londro);
+    imprimir("Numero: ");
+    var_londro += 1;
+    imprimirln(var_londro);
     //reversa (var_txt);
 fin
 
-/*
-Falta:
-    • operaciones sobre variables char (replace, reverse)
-    • fscan (sabado)
-    • buen feedback de errores
-    • idea "diferencial" del lenguaje
-        ♥ traductor de C para facilitar el aprendizaje del mismo
-        ♥ anios bisiestos
-        ♥ signos en base a fecha de nacimiento
-        ♥ dia en una fecha dada
-    • 
-*/

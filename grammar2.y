@@ -3,12 +3,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include "list.h"
+#define MAX_READEABLE_LENGTH 1024
 static void yyerror(char *s);
 int yylex();
 extern char *yytext;
-extern int *yylineno;
+extern int yylineno;
 int i = 0;
-int intval; //TODO: ver si sigue andando todo sin esta linea adentro del %{ %}
+//int intval; //TODO: ver si sigue andando todo sin esta linea adentro del %{ %}
 %}
 
 %union{
@@ -19,7 +20,7 @@ int intval; //TODO: ver si sigue andando todo sin esta linea adentro del %{ %}
 %token INICIO DEF FIN NUM ASIGN_VAR FIN_LINEA INICIO_CONDICIONAL FIN_CONDICIONAL IF_VAR ELSE_VAR
 %token IGUAL MENOR MAYOR MAYOR_IGUAL MENOR_IGUAL OR AND WHILE_VAR IMPRIMIR IMPRIMIR_VAR_LINEA MULTIPLICACION
 %token SUMA RESTA DIVISION MODULO MAS_IGUAL MENOS_IGUAL MULTIPLICACION_IGUAL DIVISION_IGUAL MODULO_IGUAL
-%token IMPRIMIR_VAR IMPRIMIR_VAR_LN LETRAS ASIGNACION_IGUAL CONCAT_VAR COMA PARENTESIS_ABRE PARENTESIS_CIERRA
+%token IMPRIMIR_VAR IMPRIMIR_VAR_LN LETRAS ASIGNACION_IGUAL CONCAT_VAR COMA PARENTESIS_ABRE PARENTESIS_CIERRA LEER_VAR ERROR_COMENTARIO
 
 %token <texto> NOMBRE
 %token <texto> TEXTO
@@ -80,6 +81,7 @@ lista_sentencias:
         | sentencia fin_sentencia lista_sentencias
         | condicional lista_sentencias 
         | condicional
+        | ERROR_COMENTARIO {yyerror("comentario sin cerrar");}
         ;
 
 lista_sentencias_bloques: 
@@ -92,6 +94,7 @@ lista_sentencias_bloques:
 // fin_sentencia → FIN_LINEA
 fin_sentencia:
         FIN_LINEA {printf(";");}
+        | ERROR_COMENTARIO {yyerror("comentario sin cerrar");}
         ;
 
 // sentencia → nueva_variable | operacion_sobre_variable //| WHILE | IF_ELSE | SWITCH_CASE
@@ -101,6 +104,7 @@ sentencia:
         | operacion_sobre_variable_igual
         | imprimir
         | concat
+        | leer
         ;
 
 sentencia_bloques:
@@ -115,7 +119,7 @@ operacion_sobre_variable_igual:
         |variable_int operador_igual variable_int
          ;
                         
-variable_int: NOMBRE {struct node * aux = find($1); if(aux == NULL || aux->is_char){yyerror("Tipo de argumento invalido");}else{printf("%s",$1);}}
+variable_int: NOMBRE {struct node * aux = find($1); if(aux == NULL || aux->is_char){yyerror("tipo de argumento invalido");}else{printf("%s",$1);}}
                 ;
 
 multiple_operadores:
@@ -168,18 +172,18 @@ concat:
                 struct node * second =find($5);
 
                 if(first == NULL || second == NULL || (!first->is_char || !second->is_char)){
-                        yyerror("Argumento invalido");
+                        yyerror("argumento invalido");
                 }else{
                         printf("char * aux%d = calloc(sizeof(char),(strlen(%s)+strlen(%s)));strcat(aux%d,%s);strcat(aux%d,%s); %s = aux%d",i,first->name_var, second->name_var,i,first->name_var,i, second->name_var,first->name_var,i);
                         i+=1;
                 }
         } 
-        |CONCAT_VAR PARENTESIS_ABRE NOMBRE COMA TEXTO PARENTESIS_CIERRA {
+        | CONCAT_VAR PARENTESIS_ABRE NOMBRE COMA TEXTO PARENTESIS_CIERRA {
                 struct node * first =find($3);
         
 
                 if(first == NULL || (!first->is_char)){
-                        yyerror("Argumento invalido");
+                        yyerror("argumento invalido");
                 }else{
                         char *auxSTR = malloc(sizeof(char)* (strlen($5)+1));
                         strcpy(auxSTR,$5);
@@ -223,6 +227,24 @@ concat:
 //             }
 //         }
 
+
+leer:
+        LEER_VAR PARENTESIS_ABRE NOMBRE PARENTESIS_CIERRA{
+                struct node * aux=find($3);
+        
+                if(aux == NULL ){
+                        yyerror("la variable no esta definida");
+                }
+                if(aux->is_char){
+                printf("char * aux%d = calloc(sizeof(char),%d);scanf(\"%%s\",aux%d);%s = aux%d",i,MAX_READEABLE_LENGTH,i,aux->name_var,i);
+                i+=1;
+                }else{
+                        printf("int aux%d = 0;;scanf(\"%%d\",&aux%d);%s = aux%d",i,i,aux->name_var,i);
+                        i+=1;
+                }
+
+        }
+
 imprimir:
         IMPRIMIR_VAR TEXTO { printf("printf(%s)", $2) ; }
         |IMPRIMIR_VAR_LINEA TEXTO {
@@ -247,7 +269,7 @@ imprimir:
         | IMPRIMIR_VAR NOMBRE {
                 struct node * node = find($2);
                 if(node == NULL){
-                        yyerror("Error, variable invalida");
+                        yyerror("variable invalida");
                 }else{
                    if(node->is_char){
                          printf("printf(\"%%s\", %s)", (char *)node->name_var);
@@ -260,7 +282,7 @@ imprimir:
         | IMPRIMIR_VAR PARENTESIS_ABRE NOMBRE PARENTESIS_CIERRA {
                 struct node * node = find($3);
                 if(node == NULL){
-                        yyerror("Error, variable invalida");
+                        yyerror("variable invalida");
                 }else{
                    if(node->is_char){
                          printf("printf(\"%%s\", %s)", (char *)node->name_var);
@@ -273,7 +295,7 @@ imprimir:
         | IMPRIMIR_VAR_LINEA NOMBRE {
                 struct node * node = find($2);
                 if(node == NULL){
-                        yyerror("Error, variable invalida");
+                        yyerror("variable invalida");
                 }else{
                    if(node->is_char){
                          printf("printf(\"%%s \\n\", %s)", (char *)node->name_var);
@@ -286,7 +308,7 @@ imprimir:
         | IMPRIMIR_VAR_LINEA PARENTESIS_ABRE NOMBRE PARENTESIS_CIERRA {
                 struct node * node = find($3);
                 if(node == NULL){
-                        yyerror("Error, variable invalida");
+                        yyerror("variable invalida");
                 }else{
                    if(node->is_char){
                          printf("printf(\"%%s \\n\", %s)", (char *)node->name_var);
@@ -318,15 +340,19 @@ F_CHAR:
         ;
 
 nombre_int:
-        NOMBRE { if(find($1) == NULL){insertFirst($1,0); printf("%s",$1);} else{yyerror("duplicated");}}
+        NOMBRE { if(find($1) == NULL){insertFirst($1,0); printf("%s",$1);} else{yyerror("variable duplicada");}}
         ;
 
 nombre_char:
-        NOMBRE {if(find($1) == NULL){insertFirst($1,1); printf("%s",$1);} else{yyerror("duplicated");}}
+        NOMBRE {if(find($1) == NULL){insertFirst($1,1); printf("%s",$1);} else{yyerror("variable duplicada");}}
         ;
 
 nombre_const:
-        NOMBRE_CONST {if(find($1) == NULL){insertFirst($1,0); printf("#define %s",$1);} else{yyerror("duplicated");}}
+        NOMBRE_CONST {if(find($1) == NULL){
+                                insertFirst($1,0); printf("#define %s",$1);
+                        } else{
+                                yyerror("variable duplicada");
+                        }}
         ;
 
 condicional:
@@ -410,7 +436,7 @@ condicion_logica:
         ;
                    
 
-// // lista_CASE → CASE | lista_CASE CASE
+// // lista_CASE → CASE | lista CASE
 // lista_CASE:
 //            CASE 
 //            | lista_CASE CASE
@@ -447,10 +473,11 @@ int main(){
 
 
 static void yyerror(char* s){
-    {
-        if (yytext[0] == '\n'){
-            yytext[0] = '\\';
+        if (!strcmp("syntax error", s)){
+                s= "error de sintaxis";
         }
-        fprintf(stderr, "Error: %s en linea %d, simbolo %c\n", s, *yylineno, yytext[0]);
-    }
+        fprintf(stderr, "---------------------ERROR---------------------\n");
+        fprintf(stderr, "Error: %s en linea %d\n", s, yylineno);
+        fprintf(stderr, "-----------------------------------------------\n");
+        exit(-1);
 }

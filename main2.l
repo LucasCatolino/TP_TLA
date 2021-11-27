@@ -5,14 +5,14 @@
     #include "y.tab.h"
     #include <string.h>
     static void yyerror(char* s);
-    static void comment(void);
+    static int buen_comentario(void);
     int intval;
 %}
 
-INICIO "inicio:"
+INICIO "inicio:\n"
 FIN "fin"
-NUM "num"
-LETRAS "letras"
+NUM "num "
+LETRAS "letras "
 ASIGN_VAR "="
 ASIGNACION_IGUAL ":="
 IGUAL "=="
@@ -42,6 +42,7 @@ MODULO_IGUAL "%="
 NOMBRE var_[a-z|A-Z|0-9|_]+
 TEXTO ["][^\n]*["]
 IMPRIMIR_VAR "imprimir"
+LEER_VAR "leer"
 IMPRIMIR_VAR_LINEA "imprimirln"
 NOMBRE_CONST const_[a-z|A-Z|0-9|_]+
 DEF "definicion:"
@@ -49,8 +50,10 @@ CONCAT_VAR "concatenar"
 PARENTESIS_ABRE "("
 PARENTESIS_CIERRA ")"
 COMA ","
+nl  "\n"
 
 %%
+{nl}                    {yylineno++; ;}
 [ \t]+                  ;
 {INICIO}                return INICIO;
 {DEF}                   return DEF;
@@ -75,6 +78,7 @@ COMA ","
 {OR}                    return OR;
 {WHILE_VAR}             return WHILE_VAR;
 {IMPRIMIR_VAR}          return IMPRIMIR_VAR;
+{LEER_VAR}              return LEER_VAR;
 {IMPRIMIR_VAR_LINEA}    return IMPRIMIR_VAR_LINEA;
 {MULTIPLICACION}        return MULTIPLICACION;
 {SUMA}                  return SUMA;
@@ -92,15 +96,16 @@ COMA ","
 {PARENTESIS_ABRE}       return PARENTESIS_ABRE;
 {PARENTESIS_CIERRA}     return PARENTESIS_CIERRA;
 {COMA}                  return COMA;
-"/*"                    { comment(); }
+"/*"                    { if (!buen_comentario()) return ERROR_COMENTARIO;}
 "//".*                  { /* consume //-comment */ }
 .                       ;
 %%
 
-static void comment(void)
+
+static int buen_comentario(void)
 {
     int c;
-    int first= yylineno;
+    int first= yylineno + 1;
     while ((c = input()) != 0){
         if (c == '\n') {
             yylineno++;
@@ -113,15 +118,18 @@ static void comment(void)
                 yylineno++;
             }
             if (c == '/') {
-                return;
+                return 1;
             }
             if (c == 0) {
                 break;
             }
         }
     }
+    fprintf(stderr, "---------------------ERROR---------------------\n");
     fprintf(stderr, "Error: abre comentario en linea %d\n", first);
+    fprintf(stderr, "-----------------------------------------------\n");
     yyerror("comentario sin terminar");
+    return 0;
 }
 
 static void yyerror(char* s){
@@ -129,6 +137,9 @@ static void yyerror(char* s){
         if (yytext[0] == '\n'){
             yytext[0] = '\\';
         }
-        fprintf(stderr, "Error: %s en linea %d, simbolo %c\n", s, yylineno, yytext[0]);
+        fprintf(stderr, "---------------------ERROR---------------------\n");
+        fprintf(stderr, "Error: %s en linea %d\n", s, yylineno);
+        fprintf(stderr, "-----------------------------------------------\n");
+        exit(-1);
     }
 }

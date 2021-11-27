@@ -9,7 +9,15 @@
 
 # 4. nombre de ejecutable final pasado como parametro
 
-#             4.
-gcc aux.c -o $2
+
+if [ $? -ne 255 ] 
+then
+
+    #             4.
+    gcc aux.c -o $2
+
+else
+    echo "Aviso: falta corregir errores para compilar sin problemas"
+fi
 
 rm aux.c

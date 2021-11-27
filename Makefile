@@ -10,4 +10,4 @@ clean:
 3: 
 	gcc -Wall -o main2 list.c lex.yy.c y.tab.c
 
-all: 1 2 3
+all: clean 1 2 3
