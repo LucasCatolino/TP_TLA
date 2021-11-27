@@ -15,6 +15,7 @@ NUM "num "
 LETRAS "letras "
 ASIGN_VAR "="
 ASIGNACION_IGUAL ":="
+DISTINTO "!="
 IGUAL "=="
 MAYOR ">"
 MAYOR_IGUAL ">="
@@ -64,6 +65,7 @@ nl  "\n"
 {ASIGN_VAR}             return ASIGN_VAR;
 {NOMBRE}                {strcpy(yylval.texto, yytext); return NOMBRE;}
 {NOMBRE_CONST}          {strcpy(yylval.texto, yytext); return NOMBRE_CONST;}
+{DISTINTO}              return DISTINTO;
 {INICIO_CONDICIONAL}    return INICIO_CONDICIONAL;
 {FIN_CONDICIONAL}       return FIN_CONDICIONAL;
 {IF_VAR}                return IF_VAR;
